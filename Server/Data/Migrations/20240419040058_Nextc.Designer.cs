@@ -4,6 +4,7 @@ using HotelManagment.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240419040058_Nextc")]
+    partial class Nextc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -276,6 +279,9 @@ namespace HotelManagment.Server.Data.Migrations
 
                     b.HasKey("ReservationID");
 
+                    b.HasIndex("RoomID")
+                        .IsUnique();
+
                     b.ToTable("reservation");
                 });
 
@@ -286,12 +292,6 @@ namespace HotelManagment.Server.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomID"));
-
-                    b.Property<DateTime>("CheckOutDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HowMannhyPersons")
-                        .HasColumnType("int");
 
                     b.Property<int>("RoomNumer")
                         .HasColumnType("int");
@@ -438,6 +438,17 @@ namespace HotelManagment.Server.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HotelManagment.Server.Models.Reservation", b =>
+                {
+                    b.HasOne("HotelManagment.Shared.Room", "room")
+                        .WithOne("reservation")
+                        .HasForeignKey("HotelManagment.Server.Models.Reservation", "RoomID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("room");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -486,6 +497,12 @@ namespace HotelManagment.Server.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Room", b =>
+                {
+                    b.Navigation("reservation")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

@@ -1,8 +1,14 @@
 using HotelManagment.Server.Data;
 using HotelManagment.Server.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Authorization;
+using static System.Formats.Asn1.AsnWriter;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using HotelManagment.Server.Interface;
+using IEmailSender = HotelManagment.Server.Interface.IEmailSender;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +26,7 @@ builder.Services.AddIdentityServer()
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
-
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -45,7 +51,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseIdentityServer();
 app.UseAuthorization();
 

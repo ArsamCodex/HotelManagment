@@ -1,0 +1,149 @@
+﻿@page "/ReserveRoom"
+@using HotelManagment.Server.Models;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@using HotelManagment.Shared
+@using System.Security.Claims
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+<AuthorizeView Context="authContext">
+    <Authorized Context="formContext">
+
+        <div class="form-container">
+            <EditForm Model="@reservationRoom" OnValidSubmit="@HandleValidSubmit">
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="reservationRoom.Email" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Passanger Email :</label>
+
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="reservationRoom.FirstName" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Passanger First Name :</label>
+
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="reservationRoom.LastName" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Passanger Last Name :</label>
+
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="reservationRoom.Adress" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Passanger Adress :</label>
+
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputDate @bind-Value="reservationRoom.CheckInDate" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Start Ime:</label>
+
+                </div>
+                <div class="form-floating mb-3">
+                    <InputDate @bind-Value="reservationRoom.CheckOutDate" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">End Time:</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="reservationRoom.HowManyPerosn" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">How Manny Persons</label>
+                </div>
+                <div class="checkbox mb-3">
+                    <InputCheckbox @bind-Value="reservationRoom.IsPaid" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+                    <label for="email">Is Paid</label>
+                </div>
+
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="reservationRoom.Amount" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Amount</label>
+                </div>
+                <div class="col-sm-10">
+                    
+                <select>
+                @foreach (var room in rooms)
+                {
+                    <option value="@room.RoomID">@room.RoomNumer</option>
+                }
+                </select>
+                    <label for="email">Rooms Free</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="reservationRoom.Staff" readonly id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email">Staff</label>
+                </div>
+
+                <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            </EditForm>
+        </div>
+    </Authorized>
+
+</AuthorizeView>
+@user2
+@code {
+    string user2;
+    public Reservation reservationRoom = new Reservation();
+    IEnumerable<Room> rooms = new List<Room>();
+    public async Task HandleValidSubmit()
+    {
+        try
+        {
+            var x = await Http.PostAsJsonAsync("/Reservation", reservationRoom);
+            if (x.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/");
+                await SendEmailAsync();
+
+            }
+            else
+            {
+                // Handle unsuccessful HTTP response (e.g., display error message)
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            reservationRoom.Staff = user2;
+            reservationRoom.CheckInDate = DateTime.Now;
+            reservationRoom.CheckOutDate = DateTime.Now;
+            // reservationRoom.RoomID = 2;
+
+
+            rooms = await Http.GetFromJsonAsync<List<Room>>("/Reservation/rooms");
+        }
+    }
+    private async Task SendEmailAsync()
+    {
+        try
+        {
+            EmailRequest request = new EmailRequest();
+            {
+                request.Email = reservationRoom.Email;
+                request.HtmlMessage = $"Mr{reservationRoom.FirstName} Yu Have Booked{reservationRoom.RoomID} This is Test From Local";
+                request.Subject = "Booking A Room Confirmation Test Local";
+            };
+         
+            var x = await Http.PostAsJsonAsync("/Reservation/Email", request);
+           
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while sending the email: {ex}");
+
+            // Handle exceptions
+            // You might want to display an error message to the user or log the exception
+        }
+    }
+}
+
