@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HotelManagment.Server.Data.Migrations
+namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace HotelManagment.Server.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.18")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -249,6 +249,9 @@ namespace HotelManagment.Server.Data.Migrations
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DigitalSignuture")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -261,6 +264,9 @@ namespace HotelManagment.Server.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReserved")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -276,6 +282,9 @@ namespace HotelManagment.Server.Data.Migrations
 
                     b.HasKey("ReservationID");
 
+                    b.HasIndex("RoomID")
+                        .IsUnique();
+
                     b.ToTable("reservation");
                 });
 
@@ -287,7 +296,7 @@ namespace HotelManagment.Server.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomID"));
 
-                    b.Property<DateTime>("CheckOutDate")
+                    b.Property<DateTime?>("CheckOutDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("HowMannhyPersons")
@@ -438,6 +447,17 @@ namespace HotelManagment.Server.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HotelManagment.Server.Models.Reservation", b =>
+                {
+                    b.HasOne("HotelManagment.Shared.Room", "room")
+                        .WithOne("reservation")
+                        .HasForeignKey("HotelManagment.Server.Models.Reservation", "RoomID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("room");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -486,6 +506,12 @@ namespace HotelManagment.Server.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Room", b =>
+                {
+                    b.Navigation("reservation")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

@@ -12,7 +12,7 @@ namespace HotelManagment.Shared
         public int RoomID { get; set; }
         public int RoomNumer { get; set; }
         public int HowMannhyPersons { get; set; }
-        public DateTime CheckOutDate { get; set; }
-        //  public Reservation reservation { get; set; }
+        public DateTime? CheckOutDate { get; set; }
+        public Reservation reservation { get; set; }
     }
 }

@@ -9,18 +9,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HotelManagment.Server.Data.Migrations
+namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240419025953_second")]
-    partial class second
+    [Migration("20240419173418_Added")]
+    partial class Added
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.18")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -252,6 +252,9 @@ namespace HotelManagment.Server.Data.Migrations
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DigitalSignuture")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -264,6 +267,9 @@ namespace HotelManagment.Server.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReserved")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -292,6 +298,12 @@ namespace HotelManagment.Server.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomID"));
+
+                    b.Property<DateTime>("CheckOutDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HowMannhyPersons")
+                        .HasColumnType("int");
 
                     b.Property<int>("RoomNumer")
                         .HasColumnType("int");

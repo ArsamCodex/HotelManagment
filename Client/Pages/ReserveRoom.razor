@@ -63,7 +63,7 @@
                 <select>
                 @foreach (var room in rooms)
                 {
-                    <option value="@room.RoomID">@room.RoomNumer</option>
+                    <option value="@room.RoomID">@room.RoomNumer @room.HowMannhyPersons</option>
                 }
                 </select>
                     <label for="email">Rooms Free</label>

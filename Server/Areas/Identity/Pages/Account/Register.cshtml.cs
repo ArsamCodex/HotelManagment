@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using HotelManagment.Server.Interface;
 using IEmailSender = HotelManagment.Server.Interface.IEmailSender;
 using HotelManagment.Shared;
+using System.Web;
 
 namespace HotelManagment.Server.Areas.Identity.Pages.Account
 {
@@ -134,10 +135,13 @@ namespace HotelManagment.Server.Areas.Identity.Pages.Account
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
+                    string decodedUrl = HttpUtility.HtmlDecode(callbackUrl);
+
+
                     EmailRequest request = new EmailRequest();
                     {
                         request.Email = Input.Email;
-                        request.HtmlMessage = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
+                        request.HtmlMessage = decodedUrl;
                         request.Subject = "Booking A Room Confirmation Test Local";
                     };
 
@@ -150,7 +154,7 @@ namespace HotelManagment.Server.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return LocalRedirect("/");
                     }
                 }
                 foreach (var error in result.Errors)

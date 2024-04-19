@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelManagment.Server", "Server\HotelManagment.Server.csproj", "{06F381E8-0F8C-4D6D-8464-B72F37553D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelManagment.Server", "Server\HotelManagment.Server.csproj", "{06F381E8-0F8C-4D6D-8464-B72F37553D53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelManagment.Client", "Client\HotelManagment.Client.csproj", "{F2022799-2B12-4257-A00F-87371B7F367A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelManagment.Client", "Client\HotelManagment.Client.csproj", "{F2022799-2B12-4257-A00F-87371B7F367A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelManagment.Shared", "Shared\HotelManagment.Shared.csproj", "{E17A5798-59F7-45B2-AC9E-816E13870FC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelManagment.Shared", "Shared\HotelManagment.Shared.csproj", "{E17A5798-59F7-45B2-AC9E-816E13870FC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
