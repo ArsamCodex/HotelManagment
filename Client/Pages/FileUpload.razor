@@ -1,18 +1,20 @@
-﻿@page "/fileupload"
+﻿@page "/Upload"
 @inject HttpClient Http
 @using System.IO
 @using HotelManagment.Shared
 
-<h3>@Message</h3>
+
 
 <form @onsubmit="OnSubmit">
     <InputFile OnChange="OnInputFileChange" multiple />
     <br /><br />
     <button type="submit">Upload Selected File(s)</button>
 </form>
+<h3>@Message</h3>
 @code {
     string Message = "No file(s) selected";
     IReadOnlyList<IBrowserFile> selectedFiles;
+    string filename{ get; set; }
 
     private void OnInputFileChange
     (InputFileChangeEventArgs e)
@@ -34,11 +36,15 @@
             uploadedFile.FileName = file.Name;
             uploadedFile.FileContent = ms.ToArray();
             ms.Close();
-
-            await Http.PostAsJsonAsync<UploadedFile>
-    ("/Image/UpImage", uploadedFile);
+            filename = file.Name;
+            var x =   await Http.PostAsJsonAsync<UploadedFile>
+      ("/Image/UpImage", uploadedFile);
+          
+                
+            
         }
-        Message = $"{selectedFiles.Count} file(s) uploaded on server";
+        
+        Message = $"{filename} file(s) uploaded on server";
         this.StateHasChanged();
     }
 }

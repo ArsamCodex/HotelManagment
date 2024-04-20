@@ -27,7 +27,7 @@
 
                 </div>
 
-        <InputFile OnChange="HandleFileSelected" />
+       
                 
                 <button type="submit" class="w-100 btn btn-lg btn-Danger">Register</button>
 
@@ -40,10 +40,7 @@
 
     private IBrowserFile selectedFile;
     private string fileDirectory = "uploads";
-    private async Task HandleFileSelected(InputFileChangeEventArgs e)
-    {
-        selectedFile = e.File;
-    }
+
     public Room rooms = new Room();
 
 
@@ -62,31 +59,7 @@
             if (!roomResponse.IsSuccessStatusCode)
             {
 
-                if (selectedFile != null)
-                    if (selectedFile != null)
-                    {
-                        using (var content = new MultipartFormDataContent())
-                        {
-                            content.Add(new StringContent(fileDirectory), "FileDirectory");
-                            content.Add(new StreamContent(selectedFile.OpenReadStream()), "FileAttachment", selectedFile.Name);
-
-                            var httpClient = new HttpClient();
-
-                            var response = await httpClient.PostAsync("Image", content);
-
-                            if (response.IsSuccessStatusCode)
-                            {
-                                // File uploaded successfully
-                                Console.WriteLine("File uploaded successfully");
-                            }
-                            else
-                            {
-                                // Handle error
-                                Console.WriteLine("Error uploading file: " + response.StatusCode);
-                            }
-                        }
-                    }
-            
+               
          
                 return;
             }
