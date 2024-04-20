@@ -80,14 +80,33 @@ namespace HotelManagment.Server.Controllers
         }
 
         [HttpPost("UpImage")]
-        public void Post(UploadedFile uploadedFile)
+        public IActionResult Post(UploadedFile uploadedFile)
         {
-            var path = $"{hostEnvironment.WebRootPath}\\{uploadedFile.FileName}";
-            var fs = System.IO.File.Create(path);
-            fs.Write(uploadedFile.FileContent, 0,
-              uploadedFile.FileContent.Length);
-            fs.Close();
+            try
+            {
+                var directoryPath = Path.Combine(hostEnvironment.WebRootPath, "Image", "Rooms");
+
+                // Ensure the directory exists, creating it if necessary
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                var filePath = Path.Combine(directoryPath, uploadedFile.FileName);
+
+                using (var fs = System.IO.File.Create(filePath))
+                {
+                    fs.Write(uploadedFile.FileContent, 0, uploadedFile.FileContent.Length);
+                }
+
+                return Ok(); // Or any other appropriate response
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
 
         public class UploadForm
         {
