@@ -1,0 +1,88 @@
+﻿@page "/InspectionRoom"
+@using HotelManagment.Shared
+@inject HttpClient _http
+@inject NavigationManager NavvigattionManager
+<h5 style="font-family:Times">Room Inspection </h5>
+
+<EditForm Model="@roomInspection" OnValidSubmit="@HandleValidSubmit">
+
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="roomInspection.RoomNumber" id="email" class="form-control" placeholder="name@example.com" />
+        <label for="email"> Room Number </label>
+
+    </div>
+
+    <div class="form-floating mb-3">
+        <InputDate @bind-Value="roomInspection.InspectionDate" id="email" class="form-control" placeholder="name@example.com" />
+        <label for="email">Inspection Date </label>
+
+    </div>
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="roomInspection.ProblemDescription" id="email" class="form-control" placeholder="name@example.com" />
+        <label for="email">Problem Description</label>
+
+    </div>
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="roomInspection.Staff" id="email" class="form-control" placeholder="name@example.com" />
+        <label for="email">Staff</label>
+
+    </div>
+
+
+
+    <button type="submit" class="w-100 btn btn-lg btn-danger">Save Data</button>
+
+</EditForm>
+
+@roomInspection.RoomNumber
+@roomInspection.InspectionDate
+@roomInspection.ProblemDescription
+@roomInspection.Staff
+
+@code {
+    public RoomInspection roomInspection = new RoomInspection();
+
+    public async Task HandleValidSubmit()
+    {
+        try
+        {
+            RoomInspection ins = new RoomInspection
+                {
+
+                    RoomNumber = roomInspection.RoomNumber,
+                    InspectionDate = roomInspection.InspectionDate,
+                    ProblemDescription = roomInspection.ProblemDescription,
+                    Staff = roomInspection.Staff
+                };
+
+            var response = await _http.PostAsJsonAsync("/Inspection", ins);
+
+            // Check if the response indicates success
+            if (response.IsSuccessStatusCode)
+            {
+                NavvigattionManager.NavigateTo("/");
+            }
+            else
+            {
+                // If the response is not successful, handle it appropriately
+                // For example, you might want to handle different status codes differently
+                // You can access the status code using response.StatusCode
+                // For now, let's just print the status code and reason phrase
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // Handle HTTP request exception
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Catch any other unexpected exceptions
+            // Handle them appropriately, log them, and possibly notify the user
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+    }
+
+}
+

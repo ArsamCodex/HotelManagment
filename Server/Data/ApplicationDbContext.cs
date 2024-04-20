@@ -14,8 +14,8 @@ namespace HotelManagment.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
-        public DbSet<Reservation> reservation { get; set; } = default;
-        public DbSet<Room> rooms { get; set; } = default;
-
+        public DbSet<Reservation>? reservation { get; set; } = default;
+        public DbSet<Room>? rooms { get; set; } = default;
+        public DbSet<RoomInspection> roomsInspection { get; set; } = default;
     }
 }

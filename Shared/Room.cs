@@ -14,6 +14,7 @@ namespace HotelManagment.Shared
         public int? HowMannhyPersons { get; set; }
         public DateTime? CheckOutDate { get; set; }
         public string? Image { get; set; }
-      //  public Reservation reservation { get; set; }
+        //  public Reservation reservation { get; set; }
+       // public RoomInspection? roomInspection { get; set; }
     }
 }

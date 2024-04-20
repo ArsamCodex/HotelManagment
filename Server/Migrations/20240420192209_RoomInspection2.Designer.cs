@@ -4,6 +4,7 @@ using HotelManagment.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240420192209_RoomInspection2")]
+    partial class RoomInspection2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -313,11 +316,14 @@ namespace HotelManagment.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomInspectionID"));
 
-                    b.Property<DateTime?>("InspectionDate")
+                    b.Property<DateTime>("InspectionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ProblemDescription")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoomID")
+                        .HasColumnType("int");
 
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
@@ -327,6 +333,10 @@ namespace HotelManagment.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RoomInspectionID");
+
+                    b.HasIndex("RoomID")
+                        .IsUnique()
+                        .HasFilter("[RoomID] IS NOT NULL");
 
                     b.ToTable("roomsInspection");
                 });
@@ -468,6 +478,15 @@ namespace HotelManagment.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HotelManagment.Shared.RoomInspection", b =>
+                {
+                    b.HasOne("HotelManagment.Shared.Room", "room")
+                        .WithOne("roomInspection")
+                        .HasForeignKey("HotelManagment.Shared.RoomInspection", "RoomID");
+
+                    b.Navigation("room");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -517,6 +536,11 @@ namespace HotelManagment.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Room", b =>
+                {
+                    b.Navigation("roomInspection");
                 });
 #pragma warning restore 612, 618
         }
