@@ -15,33 +15,41 @@
 
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.Email" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email">Passanger Email :</label>
+                    <label for="email"> Email </label>
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.FirstName" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email">Passanger First Name :</label>
+                    <label for="email">First Name </label>
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.LastName" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email">Passanger Last Name :</label>
+                    <label for="email"> Last Name </label>
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.Adress" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email">Passanger Adress :</label>
+                    <label for="email"> Adress </label>
 
                 </div>
 
                 <div class="form-floating mb-3">
                     <InputDate @bind-Value="reservationRoom.CheckInDate" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email">Start Ime:</label>
+                    <label for="email">Checkin Date</label>
+                    @if (IsCheckInInThePast)
+                    {
+                        <span class="text-danger">Check-in date cannot be in the past.</span>
+                    }
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputDate @bind-Value="reservationRoom.CheckOutDate" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email">End Time:</label>
+                    <label for="email">Checkout Date</label>
+                    @if (IsCheckoutBeforeCheckIn)
+                    {
+                        <span class="text-danger">Checkout date must be after check-in date.</span>
+                    }
                 </div>
 
                 <div class="form-floating mb-3">
@@ -73,19 +81,39 @@
                     <label for="email">Staff</label>
                 </div>
 
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                <button type="submit" class="w-100 btn btn-lg btn-primary" disabled="@(IsCheckInInThePast || IsCheckoutBeforeCheckIn)">Register</button>
             </EditForm>
         </div>
     </Authorized>
 
 </AuthorizeView>
-@user2
+
 @code {
     string user2;
+    public string StatusMessage { get; set; }
     public Reservation reservationRoom = new Reservation();
     IEnumerable<Room> rooms = new List<Room>();
+
+    private bool IsCheckoutBeforeCheckIn => reservationRoom.CheckOutDate < reservationRoom.CheckInDate;
+    private bool IsCheckInInThePast
+    {
+        get
+        {
+            var isInThePast = reservationRoom.CheckInDate < DateTime.Today;
+            Console.WriteLine($"CheckInDate: {reservationRoom.CheckInDate}, Today: {DateTime.Today}, IsInThePast: {isInThePast}");
+            return isInThePast;
+        }
+    }
+
+
     public async Task HandleValidSubmit()
     {
+        if(reservationRoom.CheckOutDate < reservationRoom.CheckInDate)
+        {
+            StatusMessage = "Date Is  Invalid";
+        }
+
+
         try
         {
             var x = await Http.PostAsJsonAsync("/Reservation", reservationRoom);

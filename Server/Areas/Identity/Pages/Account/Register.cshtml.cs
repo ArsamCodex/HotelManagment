@@ -142,7 +142,7 @@ namespace HotelManagment.Server.Areas.Identity.Pages.Account
                     {
                         request.Email = Input.Email;
                         request.HtmlMessage = decodedUrl;
-                        request.Subject = "Booking A Room Confirmation Test Local";
+                        request.Subject = "Please Verify Your Email By Clicking On Link";
                     };
 
                     await _emailSender.SendEmailAsync(request);

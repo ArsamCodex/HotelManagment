@@ -81,3 +81,9 @@ body {
   white-space: nowrap;
   line-height: 60px;
 }
+.btn-secondary {
+    background-color: blue !important;
+    color: white !important;
+    border-color: blue !important;
+}
+
