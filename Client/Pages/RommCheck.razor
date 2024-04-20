@@ -2,14 +2,17 @@
 @using HotelManagment.Shared
 @inject HttpClient _http
 @inject NavigationManager NavvigattionManager
-<h5 style="font-family:Times">Room Inspection </h5>
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+
+<h2 style="font-family:Times">Room Inspection </h2>
 
 <EditForm Model="@roomInspection" OnValidSubmit="@HandleValidSubmit">
-
+    <DataAnnotationsValidator />
+    <ValidationSummary />
     <div class="form-floating mb-3">
         <InputNumber @bind-Value="roomInspection.RoomNumber" id="email" class="form-control" placeholder="name@example.com" />
         <label for="email"> Room Number </label>
-
+        <ValidationMessage For="@(() => roomInspection.RoomNumber)" />
     </div>
 
     <div class="form-floating mb-3">
@@ -27,21 +30,13 @@
         <label for="email">Staff</label>
 
     </div>
-
-
-
     <button type="submit" class="w-100 btn btn-lg btn-danger">Save Data</button>
 
 </EditForm>
 
-@roomInspection.RoomNumber
-@roomInspection.InspectionDate
-@roomInspection.ProblemDescription
-@roomInspection.Staff
-
 @code {
     public RoomInspection roomInspection = new RoomInspection();
-
+    string user2;
     public async Task HandleValidSubmit()
     {
         try
@@ -83,6 +78,17 @@
             Console.WriteLine($"Unexpected error: {ex.Message}");
         }
     }
-
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            roomInspection.Staff = user2;
+        }
+    }
 }
 
