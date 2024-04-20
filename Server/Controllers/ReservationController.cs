@@ -91,16 +91,29 @@ namespace HotelManagment.Server.Controllers
         [HttpPost("AddRoom")]
         public async Task<IActionResult> RoomAdd([FromBody] Room room)
         {
-            
-                await _context.rooms.AddAsync(room);
-                await _context.SaveChangesAsync();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _context.rooms.AddAsync(room);
+                    await _context.SaveChangesAsync();
 
-                return Ok(room);
-            
-        
+                    // Commit the transaction if everything is successful
+                    transaction.Commit();
+
+                    return Ok(room);
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction if an error occurs
+                    transaction.Rollback();
+
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+            }
         }
-       
+
 
     }
-  
+
 }

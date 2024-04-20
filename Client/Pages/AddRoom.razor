@@ -1,46 +1,73 @@
-﻿@page "/Rooms1"
-@using HotelManagment.Server.Helper;
-@using HotelManagment.Server.Models;
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager NavigationManager
-@using HotelManagment.Shared
-@using System.Security.Claims
-@inject AuthenticationStateProvider _AuthenticationStateProvider
+﻿@page "/AddRoom"
 @inject HttpClient Http
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Http
-@using HotelManagment.Client.Pages
+@using System.IO
+@using HotelManagment.Shared
+@inject NavigationManager NavigationManager
+<h3 style="font-family:Times">Add Room To Service .</h3>
+<div class="form-container">
+    <EditForm Model="@rooms" OnValidSubmit="@HandleValidSubmit">
 
-        <div class="form-container">
-            <EditForm Model="@rooms" OnValidSubmit="@HandleValidSubmit">
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="rooms.RoomNumer" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Room Number </label>
 
-                <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="rooms.RoomNumer" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email"> Room Number </label>
-
-                </div>
-
-                <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="rooms.HowMannhyPersons" id="email" class="form-control" placeholder="name@example.com" />
-                    <label for="email"> Persons Bed </label>
-
-                </div>
-
-       
-                
-                <button type="submit" class="w-100 btn btn-lg btn-Danger">Register</button>
-
-            </EditForm>
         </div>
 
-@code{
-    private byte[] imageData;
-    private string imagePath;
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="rooms.HowMannhyPersons" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Persons Bed </label>
 
-    private IBrowserFile selectedFile;
-    private string fileDirectory = "uploads";
+        </div>
 
+
+
+        <center><button type="submit" class="w-100 btn btn-lg btn-danger" style="border:solid 2px black">Add Room</button></center>
+
+    </EditForm>
+</div>
+<form >
+    <InputFile OnChange="OnInputFileChange" multiple />
+    <br /><br />
+
+</form>
+<h3>@Message</h3>
+@code {
+  
+    string Message = "No file(s) selected";
+    IReadOnlyList<IBrowserFile> selectedFiles;
+    string filename{ get; set; }
+
+    private void OnInputFileChange
+    (InputFileChangeEventArgs e)
+    {
+        selectedFiles = e.GetMultipleFiles();
+        Message = $"{selectedFiles.Count} file(s) selected";
+        this.StateHasChanged();
+    }
+    /* private async void OnSubmit()
+    {
+    foreach (var file in selectedFiles)
+        {
+        Stream stream = file.OpenReadStream();
+        MemoryStream ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        stream.Close();
+
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.FileName = file.Name;
+        uploadedFile.FileContent = ms.ToArray();
+        ms.Close();
+        filename = file.Name;
+        var x =   await Http.PostAsJsonAsync<UploadedFile>
+        ("/Image/UpImage", uploadedFile);
+
+
+
+    }
+
+    Message = $"{filename} file(s) uploaded on server";
+    this.StateHasChanged();
+     }*/
     public Room rooms = new Room();
 
 
@@ -48,30 +75,50 @@
     {
         try
         {
+            string filename = string.Empty;
+
+            // Send room images to server
+            foreach (var file in selectedFiles)
+            {
+                using (Stream stream = file.OpenReadStream())
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(ms);
+                        UploadedFile uploadedFile = new UploadedFile
+                            {
+                                FileName = file.Name,
+                                FileContent = ms.ToArray()
+                            };
+                        filename = file.Name;
+
+                        var response = await Http.PostAsJsonAsync<UploadedFile>("/Image/UpImage", uploadedFile);
+                        response.EnsureSuccessStatusCode(); // Ensure request was successful
+                    }
+                }
+            }
+
             // Send room details to server
             Room room = new Room
                 {
                     RoomNumer = rooms.RoomNumer,
                     HowMannhyPersons = rooms.HowMannhyPersons,
+                    Image = filename
                 };
 
             var roomResponse = await Http.PostAsJsonAsync("/Reservation/AddRoom", room);
-            if (!roomResponse.IsSuccessStatusCode)
-            {
+            roomResponse.EnsureSuccessStatusCode(); // Ensure request was successful
 
-               
-         
-                return;
-            }
-
-           
-
-            NavigationManager.NavigateTo("/", true);
+            // If both requests are successful, navigate to the next page
+            NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {
             // Handle exception appropriately (e.g., display error message)
             Console.WriteLine($"An error occurred: {ex.Message}");
+
+            // Rollback any changes if an error occurs (optional)
+            // You might need to implement a rollback mechanism depending on your backend/database setup
         }
     }
 

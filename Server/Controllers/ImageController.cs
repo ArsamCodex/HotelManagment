@@ -82,30 +82,40 @@ namespace HotelManagment.Server.Controllers
         [HttpPost("UpImage")]
         public IActionResult Post(UploadedFile uploadedFile)
         {
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                var directoryPath = Path.Combine(hostEnvironment.WebRootPath, "Image", "Rooms");
-
-                // Ensure the directory exists, creating it if necessary
-                if (!Directory.Exists(directoryPath))
+                try
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    var directoryPath = Path.Combine(hostEnvironment.WebRootPath, "Image", "Rooms");
+
+                    // Ensure the directory exists, creating it if necessary
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var filePath = Path.Combine(directoryPath, uploadedFile.FileName);
+
+                    using (var fs = System.IO.File.Create(filePath))
+                    {
+                        fs.Write(uploadedFile.FileContent, 0, uploadedFile.FileContent.Length);
+                    }
+
+                    // Commit the transaction if everything is successful
+                    transaction.Commit();
+
+                    return Ok(); // Or any other appropriate response
                 }
-
-                var filePath = Path.Combine(directoryPath, uploadedFile.FileName);
-
-                using (var fs = System.IO.File.Create(filePath))
+                catch (Exception ex)
                 {
-                    fs.Write(uploadedFile.FileContent, 0, uploadedFile.FileContent.Length);
-                }
+                    // Rollback the transaction if an error occurs
+                    transaction.Rollback();
 
-                return Ok(); // Or any other appropriate response
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
             }
         }
+
 
 
         public class UploadForm
