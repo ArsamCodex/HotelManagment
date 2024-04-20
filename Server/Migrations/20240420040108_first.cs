@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Added : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -115,7 +115,8 @@ namespace HotelManagment.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoomNumer = table.Column<int>(type: "int", nullable: false),
                     HowMannhyPersons = table.Column<int>(type: "int", nullable: false),
-                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

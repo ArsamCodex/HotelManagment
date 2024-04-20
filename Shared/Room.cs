@@ -10,9 +10,10 @@ namespace HotelManagment.Shared
     public class Room
     {
         public int RoomID { get; set; }
-        public int RoomNumer { get; set; }
-        public int HowMannhyPersons { get; set; }
+        public int? RoomNumer { get; set; }
+        public int? HowMannhyPersons { get; set; }
         public DateTime? CheckOutDate { get; set; }
-        public Reservation reservation { get; set; }
+        public string? Image { get; set; }
+      //  public Reservation reservation { get; set; }
     }
 }

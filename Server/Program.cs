@@ -9,6 +9,8 @@ using static System.Formats.Asn1.AsnWriter;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using HotelManagment.Server.Interface;
 using IEmailSender = HotelManagment.Server.Interface.IEmailSender;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,12 @@ builder.Services.AddAuthentication()
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ArsClobal Public API ", Version = "V0.0.1" });
+
+
+});
 
 var app = builder.Build();
 
@@ -47,9 +55,14 @@ else
 
 app.UseHttpsRedirection();
 
+
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ArsClobal Public API");
+});
 app.UseRouting();
 app.UseAuthentication();
 app.UseIdentityServer();

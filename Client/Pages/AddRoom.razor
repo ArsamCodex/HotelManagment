@@ -1,0 +1,105 @@
+﻿@page "/Rooms1"
+@using HotelManagment.Server.Helper;
+@using HotelManagment.Server.Models;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@using HotelManagment.Shared
+@using System.Security.Claims
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Http
+@using HotelManagment.Client.Pages
+
+        <div class="form-container">
+            <EditForm Model="@rooms" OnValidSubmit="@HandleValidSubmit">
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="rooms.RoomNumer" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email"> Room Number </label>
+
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="rooms.HowMannhyPersons" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email"> Persons Bed </label>
+
+                </div>
+
+        <InputFile OnChange="HandleFileSelected" />
+                
+                <button type="submit" class="w-100 btn btn-lg btn-Danger">Register</button>
+
+            </EditForm>
+        </div>
+
+@code{
+    private byte[] imageData;
+    private string imagePath;
+
+    private IBrowserFile selectedFile;
+    private string fileDirectory = "uploads";
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+    public Room rooms = new Room();
+
+
+    public async Task HandleValidSubmit()
+    {
+        try
+        {
+            // Send room details to server
+            Room room = new Room
+                {
+                    RoomNumer = rooms.RoomNumer,
+                    HowMannhyPersons = rooms.HowMannhyPersons,
+                };
+
+            var roomResponse = await Http.PostAsJsonAsync("/Reservation/AddRoom", room);
+            if (!roomResponse.IsSuccessStatusCode)
+            {
+
+                if (selectedFile != null)
+                    if (selectedFile != null)
+                    {
+                        using (var content = new MultipartFormDataContent())
+                        {
+                            content.Add(new StringContent(fileDirectory), "FileDirectory");
+                            content.Add(new StreamContent(selectedFile.OpenReadStream()), "FileAttachment", selectedFile.Name);
+
+                            var httpClient = new HttpClient();
+
+                            var response = await httpClient.PostAsync("Image", content);
+
+                            if (response.IsSuccessStatusCode)
+                            {
+                                // File uploaded successfully
+                                Console.WriteLine("File uploaded successfully");
+                            }
+                            else
+                            {
+                                // Handle error
+                                Console.WriteLine("Error uploading file: " + response.StatusCode);
+                            }
+                        }
+                    }
+            
+         
+                return;
+            }
+
+           
+
+            NavigationManager.NavigateTo("/", true);
+        }
+        catch (Exception ex)
+        {
+            // Handle exception appropriately (e.g., display error message)
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+}

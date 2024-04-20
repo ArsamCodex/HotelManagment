@@ -5,6 +5,7 @@ using HotelManagment.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -15,13 +16,15 @@ namespace HotelManagment.Server.Controllers
     {
         public readonly ApplicationDbContext _context;
         public  IEmailSender _emailSender;
-        public ReservationController(ApplicationDbContext context,IEmailSender emailSender)
+        private readonly IWebHostEnvironment _environment;
+        public ReservationController(ApplicationDbContext context,IEmailSender emailSender, IWebHostEnvironment environment)
         {
             _context = context;
             _emailSender = emailSender;
+            _environment = environment;
         }
 
-        [HttpPost]
+        [HttpPost("reserve")]
         public async Task<IActionResult> CreateReservation([FromBody] Reservation reservation)
         {
             if (!ModelState.IsValid)
@@ -85,5 +88,19 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(500, "An error occurred while fetching rooms.");
             }
         }
+        [HttpPost("AddRoom")]
+        public async Task<IActionResult> RoomAdd([FromBody] Room room)
+        {
+            
+                await _context.rooms.AddAsync(room);
+                await _context.SaveChangesAsync();
+
+                return Ok(room);
+            
+        
+        }
+       
+
     }
+  
 }
