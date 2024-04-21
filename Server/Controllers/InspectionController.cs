@@ -145,5 +145,21 @@ namespace HotelManagment.Server.Controllers
             }
             return null;
         }
+        [HttpGet("RepairsRoomForAdmin")]
+        //Admin
+        public async Task<IActionResult> GetAllTechnicalRoomProblemForAdmin()
+        {
+            try
+            {
+                var inspections = await _context.roomsInspection
+                    .ToListAsync();
+
+                return Ok(inspections);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

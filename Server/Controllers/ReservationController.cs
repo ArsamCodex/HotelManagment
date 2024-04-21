@@ -33,7 +33,7 @@ namespace HotelManagment.Server.Controllers
             }
 
             try
-            {/*
+            {
                 Reservation reservationModel = new Reservation()
                 {
                     FirstName = reservation.FirstName,
@@ -46,8 +46,11 @@ namespace HotelManagment.Server.Controllers
                     IsPaid = reservation.IsPaid,
                     Amount = reservation.Amount,
                     Staff = reservation.Staff,
-                    RoomID = reservation.RoomID
-                };*/
+                    RoomID = reservation.RoomID,
+                    DigitalSignuture = reservation.DigitalSignuture,
+                    PhoneNumber = reservation.PhoneNumber
+                    
+                };
 
                 await _context.reservation.AddAsync(reservation);
                 await _context.SaveChangesAsync();
@@ -113,6 +116,29 @@ namespace HotelManagment.Server.Controllers
             }
         }
 
+        [HttpPut("UpdateRoomDate/{id:int}")]
+        public async Task<ActionResult> UpdateInspection(int id, Room room)
+        {
+            try
+            {
+
+                var result = await _context.rooms
+               .FirstOrDefaultAsync(e => e.RoomID == room.RoomID);
+                if (result != null)
+                {
+                    result.CheckOutDate = room.CheckOutDate;
+                    await _context.SaveChangesAsync();
+
+
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating data");
+            }
+            return null;
+        }
 
     }
 

@@ -79,11 +79,12 @@
                 </div>
               
                 <div class="col-sm-10">
-                    
-                <select>
+
+                    <select @bind="selectedroomNumber">
+                        <option value="">Choose room</option>
                 @foreach (var room in rooms)
                 {
-                    <option value="@room.RoomID">@room.RoomNumer @room.HowMannhyPersons</option>
+                    <option  value="@room.RoomID">@room.RoomNumer @room.HowMannhyPersons </option>
                 }
                 </select>
                     <label for="email">Rooms Free</label>
@@ -99,14 +100,16 @@
     </Authorized>
 
 </AuthorizeView>
-@clicked
+@selectedroomNumber
 @code {
+    public int selectedroomNumber;
     string user2;
     string clicked;
     public string Eticket1 { get; set; }
     public string StatusMessage { get; set; }
     public Reservation reservationRoom = new Reservation();
     IEnumerable<Room> rooms = new List<Room>();
+
 
 
 
@@ -117,13 +120,27 @@
         var Eticket = GenerateSHA256Hash(reservationRoom.FirstName);
         Eticket1 = Eticket;
         reservationRoom.DigitalSignuture = Eticket;
+        reservationRoom.RoomID = selectedroomNumber;
         var x = await Http.PostAsJsonAsync("/Reservation/reserve", reservationRoom);
-            if (x.IsSuccessStatusCode)
+        if (x.IsSuccessStatusCode)
+        {
+
+
+
+            NavigationManager.NavigateTo("/");
+            await SendEmailAsync();
+
+        }
+        Room rooms = new Room
             {
-                NavigationManager.NavigateTo("/");
-                await SendEmailAsync();
-            }
-       
+                RoomID = selectedroomNumber,
+                RoomNumer = 10,
+                HowMannhyPersons = 2,
+                CheckOutDate = DateTime.Now,
+                Image="ssdsd.jpg"
+            };
+        await Http.PutAsJsonAsync<Room>($"/Reservation/UpdateRoomDate/{selectedroomNumber}", rooms);
+
     }
     protected override async Task OnInitializedAsync()
     {
@@ -137,10 +154,13 @@
             reservationRoom.Staff = user2;
             reservationRoom.CheckInDate = DateTime.Now;
             reservationRoom.CheckOutDate = DateTime.Now;
-            
 
 
-            rooms = await Http.GetFromJsonAsync<List<Room>>("/Reservation/rooms");
+
+            var x = await Http.GetFromJsonAsync<List<Room>>("/Reservation/rooms");
+            rooms = x.Where(c => c.CheckOutDate == null).ToList();
+
+           
         }
     }
     private async Task SendEmailAsync()

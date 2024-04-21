@@ -1,0 +1,94 @@
+﻿@page "/Reperations"
+@using HotelManagment.Shared
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@using System.Security.Claims
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+
+<h4>Administration . </h4>
+<h5>All reported technical problem</h5>
+@if (inspectTheRoomAdminCall != null && inspectTheRoomAdminCall.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:10%;background-color:#E5E4E2">Room Number</th>
+                <th style="width:22%;background-color:#E5E4E2">Inspection Date</th>
+                <th style="width:30%;background-color:#E5E4E2">Staff</th>
+                <th style="width:15%;background-color:#E5E4E2">Urgent</th>
+                <th style="width:15%;background-color:#E5E4E2;">Start Reperation</th>
+                <th style="width:5%;background-color:#E5E4E2">View</th>
+                <th style="width:5%;background-color:#E5E4E2">Edit</th>
+                <th style="width:5%;background-color:#E5E4E2">Delete</th>
+
+                
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inspection in inspectTheRoomAdminCall)
+            {
+                <tr>
+
+                    <td>@inspection.RoomNumber</td>
+                    <td>@inspection.InspectionDate</td>
+                    <td>@inspection.Staff</td>
+                    <td >@inspection.COnditions</td>
+                    <td>
+                        @if (inspection.StartReperation != null)
+                        {
+                            <span style="color: forestgreen">Reperation Starts: @inspection.StartReperation</span>
+                        }
+                        else
+                        {
+                            @inspection.StartReperation
+                        }
+                    </td>
+                    <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-primary m-1">View</a></td>
+                    <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-warning m-1">Edit</a></td>
+                    <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-danger m-1">Delete</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No inspections available.</p>
+}
+
+@code {
+    private Timer _timer;
+    List<RoomInspection> inspectTheRoomAdminCall = new List<RoomInspection>();
+    public string user2 { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchData();
+        _timer = new Timer(async _ =>
+       {
+           await FetchData();
+           StateHasChanged(); // Ensure UI refreshes after each API call
+       }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+ 
+    }
+
+    private async Task FetchData()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+            inspectTheRoomAdminCall = await Http.GetFromJsonAsync<List<RoomInspection>>("Inspection/RepairsRoomForAdmin");
+            //    repair = await Http.GetFromJsonAsync<Repair>("")
+            //  repair = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/GetStartedRepairs/{3}");
+           
+        }
+    }
+
+}

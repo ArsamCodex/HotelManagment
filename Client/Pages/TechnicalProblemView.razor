@@ -45,14 +45,15 @@ else
     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger" @onclick="EndRepair" >End Repair</button>
 
 }-->
-
+@Message
 
 @code {
     [Parameter]
     public int TechnicalId { get; set; }
     public string user2 { get; set; }
     private bool IsLoading = false;
-    public RoomInspection roomInspection = new RoomInspection(); 
+    public RoomInspection roomInspection = new RoomInspection();
+    public string Message { get; set; }
     protected override async Task OnInitializedAsync()
     {
         // Check if the user is logged in and fetch their information
@@ -62,10 +63,10 @@ else
         {
             // User is authenticated, you can access user ID
             user2 = user.FindFirst(c => c.Type == "sub")?.Value;
-            await CheckStartDateInDatabase();
+
 
             roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
-
+            await CheckStartDateInDatabase();
         }
     }
     /*
@@ -86,9 +87,9 @@ else
     private bool startDateExists;
     private async Task<bool> CheckStartDateInDatabase()
     {
-        // Query the database to check if start date is not null
-        // Example:
-        var inspection =  await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
+
+
+        var inspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
         startDateExists = inspection.StartReperation != null;
 
         if (inspection.StartReperation != null)
@@ -101,34 +102,39 @@ else
     }
     private async Task CallDatabase()
     {
-
-
-        roomInspection.StartReperation = DateTime.Now;
-
-
-
-        var response = await Http.PutAsJsonAsync($"Inspection/UpdateInspection/{TechnicalId}", roomInspection);
-        if (response.IsSuccessStatusCode)
+        if (await CheckStartDateInDatabase())
         {
-            var updatedRoomInspection = await response.Content.ReadFromJsonAsync<RoomInspection>();
-            if (updatedRoomInspection != null)
-            {
-
-            }
-            else
-            {
-                // Handle error: Unable to deserialize the updated RoomInspection object from the response
-            }
+            Message = "The Reperatin Is Already Started";
         }
         else
         {
-            // Handle failure: Response status code indicates failure
-        }
-        roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
 
-        StateHasChanged();
+            roomInspection.StartReperation = DateTime.Now;
+
+
+
+            var response = await Http.PutAsJsonAsync($"Inspection/UpdateInspection/{TechnicalId}", roomInspection);
+            if (response.IsSuccessStatusCode)
+            {
+                var updatedRoomInspection = await response.Content.ReadFromJsonAsync<RoomInspection>();
+                if (updatedRoomInspection != null)
+                {
+
+                }
+                else
+                {
+                    // Handle error: Unable to deserialize the updated RoomInspection object from the response
+                }
+            }
+            else
+            {
+                // Handle failure: Response status code indicates failure
+            }
+            roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
+
+            StateHasChanged();
+        }
     }
-  
-    }
+}
 
 
