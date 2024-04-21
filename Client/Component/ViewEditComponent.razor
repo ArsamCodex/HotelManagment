@@ -1,0 +1,28 @@
+﻿@using HotelManagment.Shared
+
+
+<!-- RoomInspectionComponent.razor -->
+<tr>
+    <td>@RoomInspection.RoomNumber</td>
+    <td>@RoomInspection.InspectionDate</td>
+    <td>@RoomInspection.Staff</td>
+    <td>@RoomInspection.COnditions</td>
+    <td>
+        @if (RoomInspection.StartReperation != null)
+        {
+            <span style="color: forestgreen">Reparation Starts: at: @RoomInspection.StartReperation</span>
+        }
+        else
+        {
+            @RoomInspection.StartReperation
+        }
+    </td>
+    <td><a href="TechnicalDetails/@RoomInspection.RoomInspectionID" class="btn btn-primary m-1">View</a></td>
+    <td><a href="TechnicalDetails/@RoomInspection.RoomInspectionID" class="btn btn-warning m-1">Edit</a></td>
+    <td><a href="TechnicalDetails/@RoomInspection.RoomInspectionID" class="btn btn-danger m-1">Delete</a></td>
+</tr>
+
+@code {
+    [Parameter]
+    public RoomInspection RoomInspection { get; set; }
+}

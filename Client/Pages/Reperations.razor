@@ -28,7 +28,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var inspection in inspectTheRoomAdminCall)
+            <!--@foreach (var inspection in inspectTheRoomAdminCall)
             {
                 <tr>
 
@@ -39,7 +39,7 @@
                     <td>
                         @if (inspection.StartReperation != null)
                         {
-                            <span style="color: forestgreen">Reperation Starts: @inspection.StartReperation</span>
+                            <span style="color: forestgreen">Reperation Starts: at: @inspection.StartReperation</span>
                         }
                         else
                         {
@@ -50,7 +50,11 @@
                     <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-warning m-1">Edit</a></td>
                     <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-danger m-1">Delete</a></td>
                 </tr>
-            }
+            }-->
+            @foreach (var inspection in inspectTheRoomAdminCall)
+        {
+                <HotelManagment.Client.Component.ViewEditComponent RoomInspection="inspection"></HotelManagment.Client.Component.ViewEditComponent>
+        }
         </tbody>
     </table>
 }
@@ -89,6 +93,10 @@ else
             //  repair = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/GetStartedRepairs/{3}");
            
         }
+    }
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 
 }
