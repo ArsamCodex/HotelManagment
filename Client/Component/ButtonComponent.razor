@@ -1,0 +1,21 @@
+﻿
+@using HotelManagment.Shared
+<button @onclick="OnClickAsync" disabled="@IsLoading">Click me to call the database</button>
+
+@code {
+    private bool IsLoading { get; set; }
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    [Parameter]
+    public RoomInspection RoomInspection { get; set; }
+    private async Task OnClickAsync()
+    {
+
+        IsLoading = false;
+        await OnClick.InvokeAsync(RoomInspection);
+        IsLoading = true;
+
+          
+       
+    }
+}

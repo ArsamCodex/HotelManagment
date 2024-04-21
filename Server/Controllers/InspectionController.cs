@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HotelManagment.Shared;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -113,6 +114,36 @@ namespace HotelManagment.Server.Controllers
             {
                 return BadRequest(ex);
             }
+        }
+        [HttpPut("UpdateInspection/{id:int}")]
+        public async Task<ActionResult> UpdateInspection(int id, RoomInspection roomInspection)
+        {
+            try
+            {
+
+                var result = await _context.roomsInspection
+               .FirstOrDefaultAsync(e => e.RoomInspectionID == roomInspection.RoomInspectionID);
+                if (result != null)
+                {
+                    result.RoomNumber = roomInspection.RoomNumber;
+                    result.InspectionDate = roomInspection.InspectionDate;
+                    result.ProblemDescription = roomInspection.ProblemDescription;
+                    result.Staff = roomInspection.Staff;
+                    result.COnditions = roomInspection.COnditions;
+                    result.NeedRepair = roomInspection.NeedRepair;
+                    result.StartReperation = roomInspection.StartReperation;
+                    result.EndReperation = roomInspection.EndReperation;
+                    await _context.SaveChangesAsync();
+
+                   
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating data");
+            }
+            return null;
         }
     }
 }

@@ -29,17 +29,29 @@
     <hr />
     <center> <h5 style="font-weight:bold">Room Problem Description </h5></center>
     <h5>@roomInspection.ProblemDescription</h5>
+    @if (!startDateExists)
+    {
+        <HotelManagment.Client.Component.ButtonComponent OnClick="CallDatabase" RoomInspection="roomInspection"></HotelManagment.Client.Component.ButtonComponent>
+    }
 
-   
 </div>
-<button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger" @onclick="StatrRepair" disabled="@startDateExists">@GetButtonText()</button>
+<!---
+@if (!startDateExists)
+{
+    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger" @onclick="StatrRepair">Start Repair</button>
+}
+else
+{
+    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger" @onclick="EndRepair" >End Repair</button>
 
+}-->
 
 
 @code {
     [Parameter]
     public int TechnicalId { get; set; }
     public string user2 { get; set; }
+    private bool IsLoading = false;
     public RoomInspection roomInspection = new RoomInspection(); 
     protected override async Task OnInitializedAsync()
     {
@@ -56,20 +68,21 @@
 
         }
     }
+    /*
     public async Task StatrRepair()
     {
-        Repair repair = new Repair
-            {
-                ReperationStart = DateTime.Now,
-                staff = user2
+    Repair repair = new Repair
+    {
+    ReperationStart = DateTime.Now,
+    staff = user2
 
-            };
-        var x = await Http.PostAsJsonAsync<Repair>("/Inspection/repairStarts",repair);
-        if (x.IsSuccessStatusCode)
-        {
-            NavigationManager.NavigateTo("/Technical");
-        }
+    };
+    var x = await Http.PostAsJsonAsync<Repair>("/Inspection/repairStarts",repair);
+    if (x.IsSuccessStatusCode)
+    {
+    NavigationManager.NavigateTo("/Technical");
     }
+    }*/
     private bool startDateExists;
     private async Task<bool> CheckStartDateInDatabase()
     {
@@ -84,10 +97,38 @@
         }
         return false;
 
-        
+
     }
-    private string GetButtonText()
+    private async Task CallDatabase()
     {
-        return startDateExists ? "Cleaning Already Started" : "Start Repair";
+
+
+        roomInspection.StartReperation = DateTime.Now;
+
+
+
+        var response = await Http.PutAsJsonAsync($"Inspection/UpdateInspection/{TechnicalId}", roomInspection);
+        if (response.IsSuccessStatusCode)
+        {
+            var updatedRoomInspection = await response.Content.ReadFromJsonAsync<RoomInspection>();
+            if (updatedRoomInspection != null)
+            {
+
+            }
+            else
+            {
+                // Handle error: Unable to deserialize the updated RoomInspection object from the response
+            }
+        }
+        else
+        {
+            // Handle failure: Response status code indicates failure
+        }
+        roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
+
+        StateHasChanged();
     }
-}
+  
+    }
+
+
