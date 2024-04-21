@@ -108,6 +108,47 @@ namespace HotelManagment.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "repair",
+                columns: table => new
+                {
+                    RepairID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReperationStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReperationEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsAllProblemSolved = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_repair", x => x.RepairID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "reservation",
+                columns: table => new
+                {
+                    ReservationID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomID = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Adress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HowManyPerosn = table.Column<int>(type: "int", nullable: true),
+                    CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    IsReserved = table.Column<bool>(type: "bit", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Staff = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DigitalSignuture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_reservation", x => x.ReservationID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "rooms",
                 columns: table => new
                 {
@@ -230,33 +271,27 @@ namespace HotelManagment.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "reservation",
+                name: "roomsInspection",
                 columns: table => new
                 {
-                    ReservationID = table.Column<int>(type: "int", nullable: false)
+                    RoomInspectionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoomID = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Adress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HowManyPerosn = table.Column<int>(type: "int", nullable: false),
-                    CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
-                    IsReserved = table.Column<bool>(type: "bit", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
+                    RoomNumber = table.Column<int>(type: "int", nullable: false),
+                    InspectionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProblemDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Staff = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DigitalSignuture = table.Column<int>(type: "int", nullable: false)
+                    COnditions = table.Column<int>(type: "int", nullable: false),
+                    NeedRepair = table.Column<bool>(type: "bit", nullable: false),
+                    RepairID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_reservation", x => x.ReservationID);
+                    table.PrimaryKey("PK_roomsInspection", x => x.RoomInspectionID);
                     table.ForeignKey(
-                        name: "FK_reservation_rooms_RoomID",
-                        column: x => x.RoomID,
-                        principalTable: "rooms",
-                        principalColumn: "RoomID",
+                        name: "FK_roomsInspection_repair_RepairID",
+                        column: x => x.RepairID,
+                        principalTable: "repair",
+                        principalColumn: "RepairID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -336,9 +371,9 @@ namespace HotelManagment.Server.Migrations
                 columns: new[] { "SubjectId", "SessionId", "Type" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_reservation_RoomID",
-                table: "reservation",
-                column: "RoomID",
+                name: "IX_roomsInspection_RepairID",
+                table: "roomsInspection",
+                column: "RepairID",
                 unique: true);
         }
 
@@ -373,13 +408,19 @@ namespace HotelManagment.Server.Migrations
                 name: "reservation");
 
             migrationBuilder.DropTable(
+                name: "rooms");
+
+            migrationBuilder.DropTable(
+                name: "roomsInspection");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "rooms");
+                name: "repair");
         }
     }
 }

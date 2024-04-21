@@ -16,8 +16,9 @@ namespace HotelManagment.Shared
         [Required(ErrorMessage = "ProblemDescription is required")]
         public string? ProblemDescription { get; set; }
         public string Staff { get; set; }
-      //  public int? RoomID { get; set; }
-        //public Room room { get;set; }
-
+        public RepairCondition COnditions { get; set; }
+        public bool NeedRepair { get; set; }
+        public DateTime? StartReperation { get; set; }
+        public DateTime? EndReperation { get; set; }
     }
 }

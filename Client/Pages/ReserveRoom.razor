@@ -8,30 +8,46 @@
 @inject AuthenticationStateProvider _AuthenticationStateProvider
 @inject HttpClient Http
 @inject IHttpClientFactory HttpClientFactory
+@using System.Security.Cryptography;
+@using System.Text;
+
+
+
 <AuthorizeView Context="authContext">
     <Authorized Context="formContext">
 
         <div class="form-container">
             <EditForm Model="@reservationRoom" OnValidSubmit="@HandleValidSubmit1">
-
+                <DataAnnotationsValidator />
+                <ValidationSummary />
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.Email" id="email" class="form-control" placeholder="name@example.com" />
                     <label for="email"> Email </label>
+                    <ValidationMessage For="@(() => reservationRoom.Email)" />
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.FirstName" id="email" class="form-control" placeholder="name@example.com" />
                     <label for="email">First Name </label>
+                    <ValidationMessage For="@(() => reservationRoom.FirstName)" />
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.LastName" id="email" class="form-control" placeholder="name@example.com" />
                     <label for="email"> Last Name </label>
+                    <ValidationMessage For="@(() => reservationRoom.LastName)" />
 
                 </div>
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.Adress" id="email" class="form-control" placeholder="name@example.com" />
                     <label for="email"> Adress </label>
+                    <ValidationMessage For="@(() => reservationRoom.Adress)" />
+
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="reservationRoom.PhoneNumber" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email"> Phone Number </label>
+                    <ValidationMessage For="@(() => reservationRoom.PhoneNumber)" />
 
                 </div>
 
@@ -61,6 +77,7 @@
                     <InputNumber @bind-Value="reservationRoom.Amount" id="email" class="form-control" placeholder="name@example.com" />
                     <label for="email">Amount</label>
                 </div>
+              
                 <div class="col-sm-10">
                     
                 <select>
@@ -86,6 +103,7 @@
 @code {
     string user2;
     string clicked;
+    public string Eticket1 { get; set; }
     public string StatusMessage { get; set; }
     public Reservation reservationRoom = new Reservation();
     IEnumerable<Room> rooms = new List<Room>();
@@ -94,9 +112,12 @@
 
     public async Task HandleValidSubmit1()
     {
-        clicked = "om clied";
-      
-            var x = await Http.PostAsJsonAsync("/Reservation/reserve", reservationRoom);
+
+
+        var Eticket = GenerateSHA256Hash(reservationRoom.FirstName);
+        Eticket1 = Eticket;
+        reservationRoom.DigitalSignuture = Eticket;
+        var x = await Http.PostAsJsonAsync("/Reservation/reserve", reservationRoom);
             if (x.IsSuccessStatusCode)
             {
                 NavigationManager.NavigateTo("/");
@@ -116,7 +137,7 @@
             reservationRoom.Staff = user2;
             reservationRoom.CheckInDate = DateTime.Now;
             reservationRoom.CheckOutDate = DateTime.Now;
-            // reservationRoom.RoomID = 2;
+            
 
 
             rooms = await Http.GetFromJsonAsync<List<Room>>("/Reservation/rooms");
@@ -129,7 +150,7 @@
             EmailRequest request = new EmailRequest();
             {
                 request.Email = reservationRoom.Email;
-                request.HtmlMessage = $"Mr{reservationRoom.FirstName} Yu Have Booked{reservationRoom.RoomID} This is Test From Local";
+                request.HtmlMessage = $"Mr{reservationRoom.FirstName} Yu Have Booked{reservationRoom.RoomID} This is Test From Local .Your E Ticket{Eticket1}";
                 request.Subject = "Booking A Room Confirmation Test Local";
             };
          
@@ -142,6 +163,28 @@
 
             // Handle exceptions
             // You might want to display an error message to the user or log the exception
+        }
+    }
+    public static string GenerateSHA256Hash(string input)
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            // Create a new StringBuilder to collect the bytes
+            // and create a string.
+            StringBuilder stringBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                stringBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return stringBuilder.ToString();
         }
     }
 }

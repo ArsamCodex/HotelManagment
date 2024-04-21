@@ -1,0 +1,24 @@
+﻿@typeparam TEnum
+
+<select @bind="SelectedValue" class="form-control">
+    @foreach (TEnum enumValue in Enum.GetValues(typeof(TEnum)))
+    {
+        <option value="@enumValue">@enumValue.ToString()</option>
+    }
+</select>
+@SelectedValue
+@code {
+    [Parameter]
+    public TEnum SelectedValue { get; set; }
+
+    [Parameter]
+    public EventCallback<TEnum> SelectedValueChanged { get; set; }
+    private async Task OnValueChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse(typeof(TEnum), e.Value.ToString(), out var value))
+        {
+            SelectedValue = (TEnum)value;
+            await SelectedValueChanged.InvokeAsync(SelectedValue);
+        }
+    }
+}

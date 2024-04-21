@@ -33,7 +33,7 @@ namespace HotelManagment.Server.Controllers
             }
 
             try
-            {
+            {/*
                 Reservation reservationModel = new Reservation()
                 {
                     FirstName = reservation.FirstName,
@@ -47,12 +47,12 @@ namespace HotelManagment.Server.Controllers
                     Amount = reservation.Amount,
                     Staff = reservation.Staff,
                     RoomID = reservation.RoomID
-                };
+                };*/
 
-                await _context.reservation.AddAsync(reservationModel);
+                await _context.reservation.AddAsync(reservation);
                 await _context.SaveChangesAsync();
 
-                return Ok(reservationModel);
+                return Ok(reservation);
             }
             catch (Exception ex)
             {

@@ -1,0 +1,74 @@
+﻿@page "/Technical"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@using HotelManagment.Shared
+@using System.Security.Claims
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+
+
+
+
+<h4>All Repaired Actions Here </h4>
+@if (InspectionsToAction != null && InspectionsToAction.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:12%">Room Number</th>
+                <th style="width:22%">Inspection Date</th>
+                <th style="width:15%">Staff</th>
+                <th style="width:15%">Urgent</th>
+                <th style="width:15%">Start Reperation</th>
+                <th style="width:5%">Action</th>
+                
+                   
+               
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inspection in InspectionsToAction)
+            {
+                <tr>
+                   
+                    <td >@inspection.RoomNumber</td>
+                    <td>@inspection.InspectionDate</td>
+                    <td>@inspection.Staff</td>
+                    <td>@inspection.COnditions</td>
+                    <td>@inspection.StartReperation</td>
+                    <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-primary m-1">View</a></td>
+                  
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No inspections available.</p>
+}
+
+@code {
+    List<RoomInspection> InspectionsToAction = new List<RoomInspection>();
+    public string user2{ get; set; }
+    public Repair repair = new Repair();
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+            InspectionsToAction = await Http.GetFromJsonAsync<List<RoomInspection>>("Inspection/RoomRepair");
+        //    repair = await Http.GetFromJsonAsync<Repair>("")
+          //  repair = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/GetStartedRepairs/{3}");
+
+
+        }
+    }
+
+}

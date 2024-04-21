@@ -1,0 +1,6 @@
+﻿@page "/TechnicalDetails/{id:int}"
+<TechnicalProblemView TechnicalId="@id"></TechnicalProblemView>
+@code {
+    [Parameter]
+    public int id { get; set; }
+}

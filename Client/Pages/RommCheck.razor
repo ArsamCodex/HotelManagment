@@ -30,11 +30,29 @@
         <label for="email">Staff</label>
 
     </div>
+    <div class="checkbox mb-3">
+        <InputCheckbox @bind-Value="roomInspection.NeedRepair" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+        <label for="email">Repair Need</label>
+    </div>
+<InputSelect @bind-Value="roomInspection.COnditions">
+        @foreach (var prob in Enum.GetValues(typeof(RepairCondition)))
+        {
+            <option value="@prob">@prob.ToString()</option>
+          
+        }
+    </InputSelect>
+
+
     <button type="submit" class="w-100 btn btn-lg btn-danger">Save Data</button>
 
 </EditForm>
 
+@roomInspection.COnditions
+
 @code {
+  
+  
+ 
     public RoomInspection roomInspection = new RoomInspection();
     string user2;
     public async Task HandleValidSubmit()
@@ -47,7 +65,9 @@
                     RoomNumber = roomInspection.RoomNumber,
                     InspectionDate = roomInspection.InspectionDate,
                     ProblemDescription = roomInspection.ProblemDescription,
-                    Staff = roomInspection.Staff
+                    Staff = roomInspection.Staff,
+                    COnditions = roomInspection.COnditions
+
                 };
 
             var response = await _http.PostAsJsonAsync("/Inspection", ins);
@@ -90,5 +110,6 @@
             roomInspection.Staff = user2;
         }
     }
+
 }
 

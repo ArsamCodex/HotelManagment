@@ -1,0 +1,93 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@using HotelManagment.Shared
+@using System.Security.Claims
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+<style>
+    .paper {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin: 20px auto;
+        max-width: 80%;
+    }
+
+    /* Add more CSS styles for the paper-like effect as needed */
+</style>
+<div class="paper">
+    <center><h1>Room Number @TechnicalId</h1></center>
+    <h5>The Room Reported On <b>@roomInspection.InspectionDate</b></h5>
+    <h5>The Room Is Reported By The Agent : <b> @roomInspection.Staff</b></h5>
+    <h5>The Room Need Repairation : <b> @roomInspection.NeedRepair</b></h5>
+    <h5>The Room Curent Condition : <b> @roomInspection.COnditions</b></h5>
+    <h5>The Room Start Reperation Date : <b> @roomInspection.StartReperation</b></h5>
+    <h5>The Room End Reperation Date : <b> @roomInspection.EndReperation</b></h5>
+    <hr />
+    <center> <h5 style="font-weight:bold">Room Problem Description </h5></center>
+    <h5>@roomInspection.ProblemDescription</h5>
+
+   
+</div>
+<button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger" @onclick="StatrRepair" disabled="@startDateExists">@GetButtonText()</button>
+
+
+
+@code {
+    [Parameter]
+    public int TechnicalId { get; set; }
+    public string user2 { get; set; }
+    public RoomInspection roomInspection = new RoomInspection(); 
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            await CheckStartDateInDatabase();
+
+            roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
+
+        }
+    }
+    public async Task StatrRepair()
+    {
+        Repair repair = new Repair
+            {
+                ReperationStart = DateTime.Now,
+                staff = user2
+
+            };
+        var x = await Http.PostAsJsonAsync<Repair>("/Inspection/repairStarts",repair);
+        if (x.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/Technical");
+        }
+    }
+    private bool startDateExists;
+    private async Task<bool> CheckStartDateInDatabase()
+    {
+        // Query the database to check if start date is not null
+        // Example:
+        var inspection =  await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
+        startDateExists = inspection.StartReperation != null;
+
+        if (inspection.StartReperation != null)
+        {
+            return true;
+        }
+        return false;
+
+        
+    }
+    private string GetButtonText()
+    {
+        return startDateExists ? "Cleaning Already Started" : "Start Repair";
+    }
+}
