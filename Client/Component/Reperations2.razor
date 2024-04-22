@@ -1,4 +1,4 @@
-﻿@page "/Reperations"
+﻿@page "/Reperations2"
 @using HotelManagment.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -23,38 +23,17 @@
                 <th style="width:5%;background-color:#E5E4E2">Edit</th>
                 <th style="width:5%;background-color:#E5E4E2">Delete</th>
 
-                
+
 
             </tr>
         </thead>
         <tbody>
-            @foreach (var inspection in inspectTheRoomAdminCall)
+           
+             @foreach (var inspection in inspectTheRoomAdminCall)
             {
-                <tr>
+                <ViewEditComponent RoomInspection="inspection" OnEmployeeDeleted="EmployeeDeleted"></ViewEditComponent>
 
-                    <td>@inspection.RoomNumber</td>
-                    <td>@inspection.InspectionDate</td>
-                    <td>@inspection.Staff</td>
-                    <td >@inspection.COnditions</td>
-                    <td>
-                        @if (inspection.StartReperation != null)
-                        {
-                            <span style="color: forestgreen">Reperation Starts: at: @inspection.StartReperation</span>
-                        }
-                        else
-                        {
-                            @inspection.StartReperation
-                        }
-                    </td>
-                    <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-primary m-1">View</a></td>
-                    <td><a href="TechnicalDetails/@inspection.RoomInspectionID" class="btn btn-warning m-1">Edit</a></td>
-                    <td><a @onclick="() => DeleteTechnical(inspection.RoomInspectionID)" class="btn btn-danger m-1">Delete</a></td>
-                </tr>
             }
-            <!---  @foreach (var inspection in inspectTheRoomAdminCall)
-        {
-                <HotelManagment.Client.Component.ViewEditComponent RoomInspection="inspection"></HotelManagment.Client.Component.ViewEditComponent>
-            }-->
         </tbody>
     </table>
 }
@@ -62,7 +41,6 @@ else
 {
     <p>No inspections available.</p>
 }
-
 @code {
     private Timer _timer;
     List<RoomInspection> inspectTheRoomAdminCall = new List<RoomInspection>();
@@ -85,12 +63,10 @@ else
         var user = authState.User;
         if (user.Identity?.IsAuthenticated ?? false)
         {
-            // User is authenticated, you can access user ID
-            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
 
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
             inspectTheRoomAdminCall = await Http.GetFromJsonAsync<List<RoomInspection>>("Inspection/RepairsRoomForAdmin");
-            //    repair = await Http.GetFromJsonAsync<Repair>("")
-            //  repair = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/GetStartedRepairs/{3}");
+
 
         }
     }
@@ -98,20 +74,15 @@ else
     {
         _timer?.Dispose();
     }
-    public async void DeleteTechnical(int id)
+
+    protected async Task EmployeeDeleted()
     {
-      await  DeleteTechnicalAsync(id); // Call the async method without awaiting it directly
+        inspectTheRoomAdminCall = inspectTheRoomAdminCall = await Http.GetFromJsonAsync<List<RoomInspection>>("Inspection/RepairsRoomForAdmin");
+        StateHasChanged();
     }
 
-    private async Task DeleteTechnicalAsync(int id)
-    {
-       
-            await Http.DeleteAsync($"/Administration/{id}");
-            inspectTheRoomAdminCall = await Http.GetFromJsonAsync<List<RoomInspection>>("Inspection/RepairsRoomForAdmin");
-        StateHasChanged();
-           
-    
-    }
+  
+
 }
 
 

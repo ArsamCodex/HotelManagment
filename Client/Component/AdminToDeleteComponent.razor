@@ -1,0 +1,69 @@
+﻿@using HotelManagment.Shared
+@inject HttpClient Http
+   <table class="table">
+        <thead>
+            <tr>
+                <th style="width:10%;background-color:#E5E4E2">Room Number</th>
+                <th style="width:22%;background-color:#E5E4E2">Inspection Date</th>
+                <th style="width:30%;background-color:#E5E4E2">Staff</th>
+                <th style="width:15%;background-color:#E5E4E2">Urgent</th>
+                <th style="width:15%;background-color:#E5E4E2;">Start Reperation</th>
+                <th style="width:5%;background-color:#E5E4E2">View</th>
+                <th style="width:5%;background-color:#E5E4E2">Edit</th>
+                <th style="width:5%;background-color:#E5E4E2">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+            <td>@RoomInspection.RoomNumber</td>
+            <td>@RoomInspection.InspectionDate</td>
+            <td>@RoomInspection.Staff</td>
+            <td>@RoomInspection.COnditions</td>
+            <td>
+                @if (RoomInspection.StartReperation != null)
+                {
+                    <span style="color: forestgreen;font-weight:bold">Reparation Starts: at: @RoomInspection.StartReperation</span>
+                }
+                else
+                {
+                    @RoomInspection.StartReperation
+                }
+            </td>
+            <td><a href="TechnicalDetails/@RoomInspection.RoomInspectionID" class="btn btn-primary m-1">View</a></td>
+            <td><a href="TechnicalDetails/@RoomInspection.RoomInspectionID" class="btn btn-warning m-1">Edit</a></td>
+            <td><a @onclick=" Delete_Click" class="btn btn-danger m-1">Delete</a></td>
+
+
+
+        </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code{
+    [Parameter]
+    public RoomInspection RoomInspection { get; set; }
+
+    protected DeleteComponent deleteConfirmation { get; set; }
+    protected void Delete_Click()
+    {
+        DeleteConfirmation.Show();
+    }
+    protected DeleteComponent DeleteConfirmation { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ConfirmationChanged { get; set; }
+
+    protected async Task ConfirmDelete_Click(bool deleteConfirmed)
+    {
+        if (deleteConfirmed)
+        {
+            await Http.DeleteFromJsonAsync<RoomInspection>($"/Administration/{RoomInspection.RoomInspectionID}");
+            await ConfirmationChanged.InvokeAsync(RoomInspection.RoomInspectionID);
+        }
+    }
+
+}

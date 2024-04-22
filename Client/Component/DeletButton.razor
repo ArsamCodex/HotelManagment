@@ -1,0 +1,16 @@
+﻿@using HotelManagment.Shared
+<button @onclick="OnClickAsync" >Click me to call the database</button>
+
+@code {
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    [Parameter]
+    public RoomInspection RoomInspection { get; set; }
+    private async Task OnClickAsync()
+    {
+
+        await OnClick.InvokeAsync(RoomInspection);
+
+    }
+}
