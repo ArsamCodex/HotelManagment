@@ -44,6 +44,17 @@
                     <ValidationMessage For="@(() => reservationRoom.Adress)" />
 
                 </div>
+                <select @bind="reservationRoom.gender">
+                    <option value="">Gender</option>
+                    @foreach (var gender in Enum.GetValues(typeof(Gender)))
+                    {
+                        <option value="@gender">@gender</option>
+                    }
+                </select>
+
+
+
+
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="reservationRoom.PhoneNumber" id="email" class="form-control" placeholder="name@example.com" />
                     <label for="email"> Phone Number </label>
@@ -101,12 +112,14 @@
 
 </AuthorizeView>
 @selectedroomNumber
+@SelectedGender
 @code {
     public int selectedroomNumber;
     string user2;
     string clicked;
     public string Eticket1 { get; set; }
     public string StatusMessage { get; set; }
+    public string SelectedGender { get; set; }
     public Reservation reservationRoom = new Reservation();
     IEnumerable<Room> rooms = new List<Room>();
 
@@ -121,6 +134,7 @@
         Eticket1 = Eticket;
         reservationRoom.DigitalSignuture = Eticket;
         reservationRoom.RoomID = selectedroomNumber;
+     
         var x = await Http.PostAsJsonAsync("/Reservation/reserve", reservationRoom);
         if (x.IsSuccessStatusCode)
         {

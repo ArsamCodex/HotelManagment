@@ -115,7 +115,9 @@ namespace HotelManagment.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ReperationStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReperationEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsAllProblemSolved = table.Column<bool>(type: "bit", nullable: true)
+                    IsAllProblemSolved = table.Column<bool>(type: "bit", nullable: true),
+                    RoomNumberrepair = table.Column<int>(type: "int", nullable: false),
+                    staff = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,6 +164,26 @@ namespace HotelManagment.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_rooms", x => x.RoomID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "roomsInspection",
+                columns: table => new
+                {
+                    RoomInspectionID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomNumber = table.Column<int>(type: "int", nullable: false),
+                    InspectionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProblemDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Staff = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    COnditions = table.Column<int>(type: "int", nullable: false),
+                    NeedRepair = table.Column<bool>(type: "bit", nullable: false),
+                    StartReperation = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndReperation = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_roomsInspection", x => x.RoomInspectionID);
                 });
 
             migrationBuilder.CreateTable(
@@ -270,31 +292,6 @@ namespace HotelManagment.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "roomsInspection",
-                columns: table => new
-                {
-                    RoomInspectionID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoomNumber = table.Column<int>(type: "int", nullable: false),
-                    InspectionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProblemDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Staff = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    COnditions = table.Column<int>(type: "int", nullable: false),
-                    NeedRepair = table.Column<bool>(type: "bit", nullable: false),
-                    RepairID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_roomsInspection", x => x.RoomInspectionID);
-                    table.ForeignKey(
-                        name: "FK_roomsInspection_repair_RepairID",
-                        column: x => x.RepairID,
-                        principalTable: "repair",
-                        principalColumn: "RepairID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -369,12 +366,6 @@ namespace HotelManagment.Server.Migrations
                 name: "IX_PersistedGrants_SubjectId_SessionId_Type",
                 table: "PersistedGrants",
                 columns: new[] { "SubjectId", "SessionId", "Type" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_roomsInspection_RepairID",
-                table: "roomsInspection",
-                column: "RepairID",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -405,6 +396,9 @@ namespace HotelManagment.Server.Migrations
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
+                name: "repair");
+
+            migrationBuilder.DropTable(
                 name: "reservation");
 
             migrationBuilder.DropTable(
@@ -418,9 +412,6 @@ namespace HotelManagment.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "repair");
         }
     }
 }

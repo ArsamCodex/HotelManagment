@@ -48,7 +48,8 @@ namespace HotelManagment.Server.Controllers
                     Staff = reservation.Staff,
                     RoomID = reservation.RoomID,
                     DigitalSignuture = reservation.DigitalSignuture,
-                    PhoneNumber = reservation.PhoneNumber
+                    PhoneNumber = reservation.PhoneNumber,
+                    gender = reservation.gender
                     
                 };
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421035059_firstyd")]
-    partial class firstyd
+    [Migration("20240423105556_Genderenum")]
+    partial class Genderenum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Amount")
+                    b.Property<double>("Amount")
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("CheckInDate")
@@ -286,6 +286,9 @@ namespace HotelManagment.Server.Migrations
                     b.Property<string>("Staff")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("gender")
+                        .HasColumnType("int");
+
                     b.HasKey("ReservationID");
 
                     b.ToTable("reservation");
@@ -308,8 +311,12 @@ namespace HotelManagment.Server.Migrations
                     b.Property<DateTime>("ReperationStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RoomNumber")
+                    b.Property<int>("RoomNumberrepair")
                         .HasColumnType("int");
+
+                    b.Property<string>("staff")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RepairID");
 
@@ -355,6 +362,9 @@ namespace HotelManagment.Server.Migrations
                     b.Property<int>("COnditions")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("EndReperation")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("InspectionDate")
                         .HasColumnType("datetime2");
 
@@ -372,6 +382,9 @@ namespace HotelManagment.Server.Migrations
                     b.Property<string>("Staff")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartReperation")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("RoomInspectionID");
 

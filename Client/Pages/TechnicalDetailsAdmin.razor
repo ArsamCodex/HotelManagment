@@ -1,0 +1,79 @@
+﻿@page "/TechnicalDetailsAdmin/{id:int}"
+@using HotelManagment.Shared
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@inject NavigationManager navigation
+<AuthorizeView Context="authContext">
+    <Authorized Context="formContext">
+
+        <EditForm Model="@roomInspection" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="roomInspection.RoomNumber" id="email" class="form-control" placeholder="name@example.com" readonly />
+                <label for="email"> Room Number </label>
+                <ValidationMessage For="@(() => roomInspection.RoomNumber)" />
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="roomInspection.InspectionDate" id="email" class="form-control" placeholder="name@example.com" />
+                <label for="email">Inspection Date </label>
+
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="roomInspection.ProblemDescription" id="email" class="form-control" placeholder="name@example.com" />
+                <label for="email">Problem Description</label>
+
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="roomInspection.Staff" id="email" readonly class="form-control" placeholder="name@example.com" />
+                <label for="email">Staff</label>
+
+            </div>
+            <div class="checkbox mb-3">
+                <InputCheckbox @bind-Value="roomInspection.NeedRepair" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+                <label for="email">Repair Need</label>
+            </div>
+            <InputSelect @bind-Value="roomInspection.COnditions">
+                @foreach (var prob in Enum.GetValues(typeof(RepairCondition)))
+                {
+                    <option value="@prob">@prob.ToString()</option>
+
+                }
+            </InputSelect>
+
+
+            <button type="submit" class="w-100 btn btn-lg btn-danger">Save Data</button>
+
+        </EditForm>
+    </Authorized>
+
+</AuthorizeView>
+@RepNeded
+@code {
+    [Parameter]
+    public int id { get; set; }
+    public string user2 { get; set; }
+    public bool RepNeded { get; set; }
+    public RoomInspection roomInspection = new RoomInspection();
+
+    public async Task HandleValidSubmit(){
+        await Http.PutAsJsonAsync<RoomInspection>($"/Administration/UpdateTechnical", roomInspection);
+        navigation.NavigateTo("/");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+            roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"/Administration/GetRepaitForAdmin/{id}");
+        }
+    }
+
+
+}

@@ -240,7 +240,7 @@ namespace HotelManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Amount")
+                    b.Property<double>("Amount")
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("CheckInDate")
@@ -282,6 +282,9 @@ namespace HotelManagment.Server.Migrations
 
                     b.Property<string>("Staff")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("gender")
+                        .HasColumnType("int");
 
                     b.HasKey("ReservationID");
 

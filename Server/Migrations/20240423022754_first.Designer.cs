@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421041336_hhdhhdhh")]
-    partial class hhdhhdhh
+    [Migration("20240423022754_first")]
+    partial class first
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -380,7 +380,7 @@ namespace HotelManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartReperation")
+                    b.Property<DateTime?>("StartReperation")
                         .HasColumnType("datetime2");
 
                     b.HasKey("RoomInspectionID");
