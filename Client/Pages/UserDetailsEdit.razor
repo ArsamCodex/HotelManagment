@@ -1,0 +1,97 @@
+﻿@page "/UserDetailsEdit/{Userid}"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Client.DTos
+@inject NavigationManager Navigation
+
+<div class="form-container">
+    <EditForm Model="@userDto" OnValidSubmit="@HandleValidSubmit1">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="userDto.Id" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Email </label>
+
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="userDto.UserName" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">User Name </label>
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="userDto.NormalizedUserName" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Normalized User Name</label>
+
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="userDto.Email" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Email </label>
+
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="userDto.NormalizedEmail" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Normalized Email</label>
+
+        </div>
+        <div class="checkbox mb-3">
+            <InputCheckbox @bind-Value="userDto.EmailConfirmed" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+            <label for="email">Email Confirmed</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="userDto.PhoneNumber" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Phone Number</label>
+        </div>
+
+        <div class="checkbox mb-3">
+            <InputCheckbox @bind-Value="userDto.PhoneNumberConfirmed" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+            <label for="email">Phone  Confirmed</label>
+        </div>
+        <div class="checkbox mb-3">
+            <InputCheckbox @bind-Value="userDto.TwoFactorEnabled" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+            <label for="email">2fa Login  </label>
+        </div>
+        <div class="checkbox mb-3">
+            <InputCheckbox @bind-Value="userDto.LockoutEnabled" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+            <label for="email">Lockout  </label>
+        </div>
+        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger">Force Change</button>
+    </EditForm>
+
+</div>
+@code {
+    [Parameter]
+    public string Userid { get; set; }
+    public string user2 { get; set; }
+    public UserDto userDto = new UserDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+            userDto = await Http.GetFromJsonAsync<UserDto>($"Administration/GetUserById/{Userid}");
+
+        }
+    }
+    public async Task HandleValidSubmit1()
+    {
+
+        var response = await Http.PutAsJsonAsync($"Administration/UpdateUser/{Userid}", userDto);
+
+
+      
+        if (response.IsSuccessStatusCode)
+        {
+              Navigation.NavigateTo("/Users", true);
+        }
+    }
+}

@@ -9,14 +9,14 @@
     <td>@userDto.Email</td>
     <td>@userDto.EmailConfirmed</td>
     <td>@userDto.PhoneNumber</td>
-    <td><a href="" class="btn btn-primary m-1">View</a></td>
-    <td><a href="" class="btn btn-warning m-1">Edit</a></td>
+    <td><a href="UserDetails/@userDto.Id" class="btn btn-primary m-1">View</a></td>
+    <td><a href="UserDetailsEdit/@userDto.Id" class="btn btn-warning m-1">Edit</a></td>
     <td><a @onclick="Delete_Click" class="btn btn-danger m-1">Delete</a></td>
 
     
 </tr>
 <DeleteComponent @ref="DeleteConfirmation" ConfirmationChanged="ConfirmDelete_Click"
-                 ConfirmationMessage=@($"Are you sure you want to delete ")>
+                 ConfirmationMessage=@($"Are you sure you want to delete")>
 </DeleteComponent>
 
 @code {

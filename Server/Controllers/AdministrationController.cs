@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using HotelManagment.Client.Pages;
 using HotelManagment.Server.Models;
+using HotelManagment.Client.DTos;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -122,6 +123,61 @@ namespace HotelManagment.Server.Controllers
         {
             var users = await UserManager.Users.ToListAsync();
             return  Ok(users);
+        }
+        [HttpGet("GetUserById/{id}")]
+        public async Task<IActionResult> GetUserByIdAdmin(string id)
+        {
+            try
+            {
+                var technicalProb = await _context.Users.FirstOrDefaultAsync(d => d.Id == id);
+                if (technicalProb == null)
+                {
+                    return NotFound(); // Return 404 Not Found if no technical problem with the given id is found
+                }
+
+                return Ok(technicalProb);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                _logger.LogError(ex, "An error occurred while retrieving RoomInspection object.");
+
+                // Return a simple error message instead of the full exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpPut("UpdateUser/{id}")]
+        public async Task<ActionResult> UpdateUsers(UserDto user)
+        {
+            try
+            {
+
+                var result = await _context.Users
+               .FirstOrDefaultAsync(e => e.Id == user.Id);
+                if (result != null)
+                {
+                    result.UserName = user.UserName;
+                    result.NormalizedUserName = user.NormalizedUserName;
+                    result.Email = user.Email;
+                    result.NormalizedEmail = user.NormalizedEmail;
+                    result.EmailConfirmed = user.EmailConfirmed;
+                    result.PhoneNumber = user.PhoneNumber;
+                    result.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+                    result.TwoFactorEnabled = user.TwoFactorEnabled;
+                    result.LockoutEnabled = user.LockoutEnabled;
+                    result.LockoutEnd = user.LockoutEnd;
+                    await _context.SaveChangesAsync();
+
+
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating data");
+            }
+            return Ok(user);
         }
     }
 }
