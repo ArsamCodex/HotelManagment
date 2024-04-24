@@ -29,20 +29,17 @@
     <h5>Phone Number <b> @userDto.PhoneNumber</b></h5>
     <h5>Is Phone Confirmed <b> @userDto.PhoneNumberConfirmed</b></h5>
     <h5>Two Factor Login  <b> @userDto.TwoFactorEnabled</b></h5>
-
-
+    <h5>Current Role <b> @userRole</b></h5>
     <hr />
-
     <HotelManagment.Client.Component.UsersComponent.ReturnButton ButtonText="Return" Destination="/Users"></HotelManagment.Client.Component.UsersComponent.ReturnButton>
-
- 
-
 </div>
+
 @code {
     [Parameter]
     public string id { get; set; }
     public string user2 { get; set; }
     public UserDto userDto = new UserDto();
+    public string userRole { get; set; }
     protected override async Task OnInitializedAsync()
     {
         // Check if the user is logged in and fetch their information
@@ -55,7 +52,20 @@
 
 
             userDto = await Http.GetFromJsonAsync<UserDto>($"Administration/GetUserById/{id}");
-      
+            try
+            {
+                // Make the HTTP GET request to the endpoint
+                var response = await Http.GetStringAsync($"Administration/GetUserByIdRoles/{id}");
+                userRole = response;
+               
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                userRole = "An error occurred: " + ex.Message;
+            }
+        }
+
         }
     }
-}
+
