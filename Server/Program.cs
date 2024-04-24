@@ -31,6 +31,10 @@ builder.Services.AddAuthentication()
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+
+
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ArsClobal Public API ", Version = "V0.0.1" });

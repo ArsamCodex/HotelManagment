@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240423022754_first")]
-    partial class first
+    [Migration("20240423164934_firstshhdg56")]
+    partial class firstshhdg56
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,6 +229,24 @@ namespace HotelManagment.Server.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "5c5a0c55-951b-4f43-99d9-11598eee7d87",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "deb1900e-1b7c-4cc9-a58f-60f1a84a14f1",
+                            Email = "newuser@example.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "NEWUSER@EXAMPLE.COM",
+                            NormalizedUserName = "NEWUSER@EXAMPLE.COM",
+                            PasswordHash = "YourPasswordHashHere",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "ea5f2400-07c4-4985-873b-a5dfa185cefd",
+                            TwoFactorEnabled = false,
+                            UserName = "newuser@example.com"
+                        });
                 });
 
             modelBuilder.Entity("HotelManagment.Server.Models.Reservation", b =>
@@ -243,7 +261,7 @@ namespace HotelManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Amount")
+                    b.Property<double>("Amount")
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("CheckInDate")
@@ -285,6 +303,9 @@ namespace HotelManagment.Server.Migrations
 
                     b.Property<string>("Staff")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("gender")
+                        .HasColumnType("int");
 
                     b.HasKey("ReservationID");
 
@@ -413,6 +434,14 @@ namespace HotelManagment.Server.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "2d84215d-aeb0-4d66-98ec-6b56a69fb751",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -502,6 +531,13 @@ namespace HotelManagment.Server.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "5c5a0c55-951b-4f43-99d9-11598eee7d87",
+                            RoleId = "2d84215d-aeb0-4d66-98ec-6b56a69fb751"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

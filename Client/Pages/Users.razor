@@ -1,0 +1,51 @@
+﻿@page "/Users"
+@using HotelManagment.Client.DTos
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+
+
+
+<table class="table">
+        <thead>
+            <tr>
+        <th style="width:10%;background-color:#E5E4E2">Id</th>
+        <th style="width:22%;background-color:#E5E4E2">UserName</th>
+        <th style="width:30%;background-color:#E5E4E2">Email</th>
+            <th style="width:15%;background-color:#E5E4E2">Email Confirmed</th>
+            <th style="width:15%;background-color:#E5E4E2">Phone</th>
+
+            <th style="width:15%;background-color:#E5E4E2">View</th>
+            <th style="width:15%;background-color:#E5E4E2">Edit</th>
+            <th style="width:15%;background-color:#E5E4E2">Delete</th>
+
+
+    </tr>
+</thead>
+<tbody>
+    @foreach (var user in users)
+    {
+       <HotelManagment.Client.Component.UsersComponent.UserOneComponent userDto="user"></HotelManagment.Client.Component.UsersComponent.UserOneComponent>
+    }
+</tbody>
+</table>
+
+@code {
+    public List<UserDto> users = new List<UserDto>();
+    public string user2 { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            users = await Http.GetFromJsonAsync<List<UserDto>>($"/Administration/GetAllUser");
+        }
+    }
+
+}

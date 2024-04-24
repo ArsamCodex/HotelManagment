@@ -1,0 +1,44 @@
+﻿@using HotelManagment.Shared
+@inject HttpClient Http
+@using HotelManagment.Client.DTos
+
+<!-- RoomInspectionComponent.razor -->
+<tr>
+    <td>@userDto.Id</td>
+    <td>@userDto.NormalizedUserName</td>
+    <td>@userDto.Email</td>
+    <td>@userDto.EmailConfirmed</td>
+    <td>@userDto.PhoneNumber</td>
+    <td><a href="" class="btn btn-primary m-1">View</a></td>
+    <td><a href="" class="btn btn-warning m-1">Edit</a></td>
+    <td><a @onclick="Delete_Click" class="btn btn-danger m-1">Delete</a></td>
+
+    
+</tr>
+<DeleteComponent @ref="DeleteConfirmation" ConfirmationChanged="ConfirmDelete_Click"
+                 ConfirmationMessage=@($"Are you sure you want to delete ")>
+</DeleteComponent>
+
+@code {
+    [Parameter]
+    public UserDto userDto { get; set; }
+    [Parameter]
+    public EventCallback<int> OnEmployeeDeleted { get; set; }
+    protected async Task Delete_Click()
+    {
+        DeleteConfirmation.Show();
+
+
+    }
+    protected DeleteComponent DeleteConfirmation { get; set; }
+
+
+    protected async Task ConfirmDelete_Click(bool deleteConfirmed)
+    {
+        if (deleteConfirmed)
+        {
+           // await Http.DeleteAsync($"/Administration/{RoomInspection.RoomInspectionID}");
+          //  await OnEmployeeDeleted.InvokeAsync(RoomInspection.RoomInspectionID);
+        }
+    }
+}

@@ -2,7 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using HotelManagment.Shared;
 using System;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using HotelManagment.Client.Pages;
+using HotelManagment.Server.Models;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -13,11 +17,15 @@ namespace HotelManagment.Server.Controllers
         public readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment hostEnvironment;
         private readonly ILogger<AdministrationController> _logger;
-        public AdministrationController(ApplicationDbContext context, IWebHostEnvironment environment, ILogger<AdministrationController> logger)
+        private readonly UserManager<ApplicationUser> UserManager;
+      
+
+        public AdministrationController(ApplicationDbContext context, IWebHostEnvironment environment, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             hostEnvironment = environment;
             _logger = logger;
+            UserManager = userManager;
         }
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<RoomInspection>> DeleteRoomInspectionArticle(int id)
@@ -95,6 +103,25 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
+        /*
+        [HttpPost("ChnageRoleByAdmin")]
+        public async Task<IActionResult> ChangeRole(string UserID,string SelectedRole)
+        {
+            var user = await UserManager.FindByIdAsync(UserID);
+            // Check if the selected role exists
+            var roleExists = await RoleManager.RoleExistsAsync(SelectedRole);
+            var userRoles = await UserManager.GetRolesAsync(user);
+            await UserManager.RemoveFromRolesAsync(user, userRoles);
 
+            // Add the user to the selected role
+            await UserManager.AddToRoleAsync(user, SelectedRole);
+            return Ok(user);
+        }*/
+        [HttpGet("GetAllUser")]
+        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAsync()
+        {
+            var users = await UserManager.Users.ToListAsync();
+            return  Ok(users);
+        }
     }
 }

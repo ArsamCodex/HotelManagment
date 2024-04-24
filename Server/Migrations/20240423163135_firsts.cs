@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class firsts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -140,10 +140,11 @@ namespace HotelManagment.Server.Migrations
                     CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     IsReserved = table.Column<bool>(type: "bit", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: true),
+                    Amount = table.Column<double>(type: "float", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Staff = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DigitalSignuture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DigitalSignuture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    gender = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

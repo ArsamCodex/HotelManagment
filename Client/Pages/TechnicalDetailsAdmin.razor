@@ -30,6 +30,21 @@
                 <label for="email">Staff</label>
 
             </div>
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="roomInspection.StartReperation" id="email" class="form-control" placeholder="name@example.com" />
+                <label for="email">Start Reperation</label>
+
+            </div>
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="roomInspection.EndReperation" id="email" class="form-control" placeholder="name@example.com" />
+                <label for="email">End Reperation</label>
+
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="roomInspection.Staff" id="email" readonly class="form-control" placeholder="name@example.com" />
+                <label for="email">Staff</label>
+
+            </div>
             <div class="checkbox mb-3">
                 <InputCheckbox @bind-Value="roomInspection.NeedRepair" id="isPaid" class="form-check-input" placeholder="name@example.com" />
                 <label for="email">Repair Need</label>
@@ -59,7 +74,7 @@
 
     public async Task HandleValidSubmit(){
         await Http.PutAsJsonAsync<RoomInspection>($"/Administration/UpdateTechnical", roomInspection);
-        navigation.NavigateTo("/");
+        navigation.NavigateTo("/Reperations");
     }
     protected override async Task OnInitializedAsync()
     {
