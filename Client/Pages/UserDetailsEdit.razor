@@ -3,8 +3,11 @@
 @inject HttpClient Http
 @using HotelManagment.Client.DTos
 @inject NavigationManager Navigation
-
+<div style="width: 100%; background-color: @currentColor;border:1px solid black;height:50px">
+    @MessageToUser
+</div>
 <div class="form-container">
+
     <EditForm Model="@userDto" OnValidSubmit="@HandleValidSubmit1">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -62,12 +65,15 @@
     </EditForm>
 
 </div>
+<br />
+<HotelManagment.Client.Component.UsersComponent.ReturnButton ButtonText="Return" Destination="/Users"></HotelManagment.Client.Component.UsersComponent.ReturnButton>
 @code {
     [Parameter]
     public string Userid { get; set; }
     public string user2 { get; set; }
     public UserDto userDto = new UserDto();
-
+    private string currentColor = "white";
+    public string MessageToUser { get; set; }
     protected override async Task OnInitializedAsync()
     {
         // Check if the user is logged in and fetch their information
@@ -88,10 +94,19 @@
         var response = await Http.PutAsJsonAsync($"Administration/UpdateUser/{Userid}", userDto);
 
 
-      
+
         if (response.IsSuccessStatusCode)
         {
-              Navigation.NavigateTo("/Users", true);
+            ChangeColor();
+            MessageToUser = "Data Changed Sucsessfully";
+            StateHasChanged();
+
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/Users", true);
         }
+    }
+    private void ChangeColor()
+    {
+        currentColor = "lightgreen";
     }
 }

@@ -1,0 +1,61 @@
+﻿@page "/UserDetails/{id}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@using HotelManagment.Shared
+@using System.Security.Claims
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Client.DTos
+<style>
+    .paper {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin: 20px auto;
+        max-width: 80%;
+    }
+
+    /* Add more CSS styles for the paper-like effect as needed */
+</style>
+<div class="paper">
+    <center><h1>User ID @id</h1></center>
+    <h5>User Id <b>@userDto.Id</b></h5>
+    <h5>User Email <b> @userDto.Email</b></h5>
+    <h5>Is Email Confirmed <b> @userDto.EmailConfirmed</b></h5>
+    <h5>Password Hash <b> @userDto.PasswordHash</b></h5>
+    <h5>Phone Number <b> @userDto.PhoneNumber</b></h5>
+    <h5>Is Phone Confirmed <b> @userDto.PhoneNumberConfirmed</b></h5>
+    <h5>Two Factor Login  <b> @userDto.TwoFactorEnabled</b></h5>
+
+
+    <hr />
+
+    <HotelManagment.Client.Component.UsersComponent.ReturnButton ButtonText="Return" Destination="/Users"></HotelManagment.Client.Component.UsersComponent.ReturnButton>
+
+ 
+
+</div>
+@code {
+    [Parameter]
+    public string id { get; set; }
+    public string user2 { get; set; }
+    public UserDto userDto = new UserDto();
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+
+            userDto = await Http.GetFromJsonAsync<UserDto>($"Administration/GetUserById/{id}");
+      
+        }
+    }
+}

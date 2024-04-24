@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using HotelManagment.Client.Pages;
 using HotelManagment.Server.Models;
 using HotelManagment.Client.DTos;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -19,7 +20,7 @@ namespace HotelManagment.Server.Controllers
         private readonly IWebHostEnvironment hostEnvironment;
         private readonly ILogger<AdministrationController> _logger;
         private readonly UserManager<ApplicationUser> UserManager;
-      
+
 
         public AdministrationController(ApplicationDbContext context, IWebHostEnvironment environment, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager)
         {
@@ -48,11 +49,11 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Error deleting data");
             }
-           
+
         }
 
         [HttpPut("UpdateTechnical/")]
-        public async Task<ActionResult> UpdateInspection( RoomInspection roomInspection)
+        public async Task<ActionResult> UpdateInspection(RoomInspection roomInspection)
         {
             try
             {
@@ -68,7 +69,7 @@ namespace HotelManagment.Server.Controllers
                     result.COnditions = roomInspection.COnditions;
                     result.NeedRepair = roomInspection.NeedRepair;
                     result.StartReperation = roomInspection.StartReperation;
-                    result.EndReperation = roomInspection.EndReperation; 
+                    result.EndReperation = roomInspection.EndReperation;
                     await _context.SaveChangesAsync();
 
 
@@ -122,7 +123,7 @@ namespace HotelManagment.Server.Controllers
         public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAsync()
         {
             var users = await UserManager.Users.ToListAsync();
-            return  Ok(users);
+            return Ok(users);
         }
         [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> GetUserByIdAdmin(string id)
@@ -179,5 +180,55 @@ namespace HotelManagment.Server.Controllers
             }
             return Ok(user);
         }
+        [HttpGet("SearchUsers")]
+        public async Task<IActionResult> GetSearchUser(string search)
+        {
+            try
+            {
+                // Retrieve all users from the UserManager
+                var users = await UserManager.Users.ToListAsync();
+
+                // Convert search term to lowercase for case-insensitive search
+
+                // Filter users whose email contains the search term
+                users = users.Where(u => u.Email.ToLower().Contains(search)).ToList();
+
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the request.");
+            }
+        }
+        [HttpGet("GetUserByIdRoles/{id}")]
+        public async Task<IActionResult> GetUserByIdAdminRoles(string id)
+        {
+            try
+            {
+                var user = await UserManager.FindByIdAsync(id);
+
+                if (user == null)
+                {
+                    return NotFound(); // Return 404 Not Found if user with the given id is not found
+                }
+
+                var userRoles = await UserManager.GetRolesAsync(user);
+                var currentRole = userRoles.FirstOrDefault();
+                return Ok(currentRole);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                _logger.LogError(ex, "An error occurred while retrieving user roles by ID.");
+
+                // Return a simple error message instead of the full exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+
+
+
     }
 }
