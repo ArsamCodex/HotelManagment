@@ -20,14 +20,17 @@ namespace HotelManagment.Server.Controllers
         private readonly IWebHostEnvironment hostEnvironment;
         private readonly ILogger<AdministrationController> _logger;
         private readonly UserManager<ApplicationUser> UserManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
 
-        public AdministrationController(ApplicationDbContext context, IWebHostEnvironment environment, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager)
+
+        public AdministrationController(ApplicationDbContext context, IWebHostEnvironment environment, ILogger<AdministrationController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             hostEnvironment = environment;
             _logger = logger;
             UserManager = userManager;
+            _roleManager = roleManager;
         }
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<RoomInspection>> DeleteRoomInspectionArticle(int id)
@@ -227,8 +230,70 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
+        [HttpGet("GetUserByIdInclude/{id}")]
+        public async Task<ActionResult<UserDtoFOrAdmin>> GetUserByIdAdminInclude(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("User id cannot be null or empty.");
+            }
 
+            var user2 = await (from user in _context.Users
+                              join userRoles in _context.UserRoles on user.Id equals userRoles.UserId
+                              join role in _context.Roles on userRoles.RoleId equals role.Id
+                              where user.Id == id  // Filter by user id
+                              select new UserDtoFOrAdmin
+                              {
+                                  UserId = user.Id,
+                                  UserEmail = user.Email,
+                                 EmailConfirmed= user.EmailConfirmed,
+                                 PasswordHash= user.PasswordHash,
+                                  UserPhone = user.PhoneNumber,
+                                 PhoneNumberConfirmed= user.PhoneNumberConfirmed,
+                                TwoFactorEnabled=  user.TwoFactorEnabled,
+                                  RoleName = role.Name
+                              })
+                        .FirstOrDefaultAsync();  // Retrieve the first matching user or null if not found
 
+            if (user2 == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            return Ok(user2);
+        }
+        [HttpGet("GetAllRoles")]
+        public async Task<ActionResult<IEnumerable<string>>> GetAllRoles()
+        {
+            var roleNames = await _roleManager.Roles
+        .Select(r => r.Name)
+        .ToListAsync();
+            return Ok(roleNames);
+        }
+        [HttpPost("ChangeRoleAdmin/{role}/{userid}")]
+        public async Task<ActionResult> ChangeRolesAdmin(string role, string userid)
+        {
+            var user = await UserManager.FindByIdAsync(userid);
+            if (user == null)
+            {
+                return NotFound($"User with ID '{userid}' not found.");
+            }
+
+            // Check if the selected role exists
+            var roleExists = await _roleManager.RoleExistsAsync(role);
+            if (!roleExists)
+            {
+                return NotFound($"Role '{role}' not found.");
+            }
+
+            var userRoles = await UserManager.GetRolesAsync(user);
+            await UserManager.RemoveFromRolesAsync(user, userRoles);
+
+            // Add the user to the selected role
+            await UserManager.AddToRoleAsync(user, role);
+
+            return Ok();
+        }
 
     }
 }

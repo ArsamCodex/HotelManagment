@@ -1,0 +1,36 @@
+﻿<!-- RoleSelector.razor -->
+
+
+
+<div>
+    <label for="selectedRole">Select Role:</label>
+    <select id="selectedRole" @bind="SelectedRole">
+        <option value="">Select a role</option>
+        @if (Roles != null)
+        {
+            @foreach (var role in Roles)
+            {
+                <option value="@role">@role</option>
+            }
+        }
+    </select>
+    <button @onclick="ChangeRole" disabled="@string.IsNullOrEmpty(SelectedRole)">Change Role</button>
+</div>
+
+@code {
+    [Parameter]
+    public List<string> Roles { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnRoleChanged { get; set; }
+
+    private string SelectedRole { get; set; }
+
+    private async Task ChangeRole()
+    {
+        if (!string.IsNullOrEmpty(SelectedRole))
+        {
+            await OnRoleChanged.InvokeAsync(SelectedRole);
+        }
+    }
+}
