@@ -31,6 +31,8 @@
     <h5>Two Factor Login  <b> @userDto.TwoFactorEnabled</b></h5>
     <h5>Current Role <b> @userDto.RoleName</b></h5>
 
+    <HotelManagment.Client.Component.UsersComponent.RoleSelector Roles="Roles" OnRoleChanged="HandleSelectedRoleChanged" SelectedRole="SelectedRole2"></HotelManagment.Client.Component.UsersComponent.RoleSelector>
+  <!---
 
     <div>
         <label for="selectedRole">Select Role:</label>
@@ -46,12 +48,12 @@
         </select>
         <button @onclick="Changerole" disabled="@string.IsNullOrEmpty(SelectedRole)">Change Role</button>
 
-    </div>
+    </div>-->
 
     <hr />
     <HotelManagment.Client.Component.UsersComponent.ReturnButton ButtonText="Return" Destination="/Users"></HotelManagment.Client.Component.UsersComponent.ReturnButton>
 </div>
-
+@SelectedRole2
 @code {
     [Parameter]
     public string id { get; set; }
@@ -59,7 +61,7 @@
     public UserDtoFOrAdmin userDto = new UserDtoFOrAdmin();
     public string userRole { get; set; }
     private List<string> Roles { get; set; }
-    private string? SelectedRole { get; set; }
+    public string? SelectedRole2{ get; set; }
     protected override async Task OnInitializedAsync()
     {
         // Check if the user is logged in and fetch their information
@@ -89,11 +91,18 @@
 
     }
 
-    public async Task Changerole()
+    private async Task HandleSelectedRoleChanged(string selectedRole)
+    {
+        // Assign the selected role to selectedRole2
+        SelectedRole2 = selectedRole;
+        // Now you can use selectedRole2 elsewhere in the component
+       await Changerole();
+    }
 
+    public async Task Changerole()
     {
         var my = "Technical";
-        await Http.PostAsync($"Administration/ChangeRoleAdmin/{SelectedRole}/{id}", null);
+        await Http.PostAsync($"Administration/ChangeRoleAdmin/{SelectedRole2}/{id}", null);
         var response = await Http.GetAsync($"Administration/GetUserByIdInclude/{id}");
 
         if (response.IsSuccessStatusCode)

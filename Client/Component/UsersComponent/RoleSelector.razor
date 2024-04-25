@@ -1,8 +1,4 @@
-﻿<!-- RoleSelector.razor -->
-
-
-
-<div>
+﻿<div>
     <label for="selectedRole">Select Role:</label>
     <select id="selectedRole" @bind="SelectedRole">
         <option value="">Select a role</option>
@@ -24,7 +20,8 @@
     [Parameter]
     public EventCallback<string> OnRoleChanged { get; set; }
 
-    private string SelectedRole { get; set; }
+    [Parameter]
+    public string SelectedRole { get; set; }
 
     private async Task ChangeRole()
     {

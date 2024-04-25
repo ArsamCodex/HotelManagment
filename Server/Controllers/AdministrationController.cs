@@ -294,6 +294,45 @@ namespace HotelManagment.Server.Controllers
 
             return Ok();
         }
+        [HttpGet("AllReservation")]
+        public async Task<IActionResult> GetAllReservation(DateTime? startDate, DateTime? endDate, int? roomNumber, string? name)
+        {
+            try
+            {
+                IQueryable<Reservation> query = _context.reservation;
+
+                // Filter by date range if provided
+                if (startDate.HasValue && endDate.HasValue)
+                {
+                    // Add one day to endDate to include data up to the end of that day
+                    endDate = endDate.Value.AddDays(1);
+
+                    query = query.Where(r => r.CheckInDate >= startDate && r.CheckInDate < endDate);
+                }
+                // Filter by room number if provided
+                if (roomNumber.HasValue)
+                {
+                    query = query.Where(r => r.RoomID == roomNumber);
+                }
+
+                // Filter by name if provided
+                if (!string.IsNullOrEmpty(name))
+                {
+                    query = query.Where(r => r.LastName.Contains(name));
+                }
+
+                var reservations = await query.ToListAsync();
+
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "An error occurred while fetching reservations.");
+            }
+        }
+
+
 
     }
 }
