@@ -241,20 +241,20 @@ namespace HotelManagment.Server.Controllers
             }
 
             var user2 = await (from user in _context.Users
-                              join userRoles in _context.UserRoles on user.Id equals userRoles.UserId
-                              join role in _context.Roles on userRoles.RoleId equals role.Id
-                              where user.Id == id  // Filter by user id
-                              select new UserDtoFOrAdmin
-                              {
-                                  UserId = user.Id,
-                                  UserEmail = user.Email,
-                                 EmailConfirmed= user.EmailConfirmed,
-                                 PasswordHash= user.PasswordHash,
-                                  UserPhone = user.PhoneNumber,
-                                 PhoneNumberConfirmed= user.PhoneNumberConfirmed,
-                                TwoFactorEnabled=  user.TwoFactorEnabled,
-                                  RoleName = role.Name
-                              })
+                               join userRoles in _context.UserRoles on user.Id equals userRoles.UserId
+                               join role in _context.Roles on userRoles.RoleId equals role.Id
+                               where user.Id == id  // Filter by user id
+                               select new UserDtoFOrAdmin
+                               {
+                                   UserId = user.Id,
+                                   UserEmail = user.Email,
+                                   EmailConfirmed = user.EmailConfirmed,
+                                   PasswordHash = user.PasswordHash,
+                                   UserPhone = user.PhoneNumber,
+                                   PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                                   TwoFactorEnabled = user.TwoFactorEnabled,
+                                   RoleName = role.Name
+                               })
                         .FirstOrDefaultAsync();  // Retrieve the first matching user or null if not found
 
             if (user2 == null)
@@ -343,7 +343,7 @@ namespace HotelManagment.Server.Controllers
 
                 // Your query logic to check the condition
                 var technicalProb = await _context.roomsInspection.FirstOrDefaultAsync(d => d.StaffStartedAction != null && d.StaffEndedAction == null);
-         
+
                 if (technicalProb != null)
                 {
                     isTrue = true;
@@ -422,5 +422,30 @@ namespace HotelManagment.Server.Controllers
             }
 
         }
+
+        [HttpGet("GetReservationByIdAdmin/{id}")]
+        public async Task<IActionResult> GetReservationByIdAdmin(int id)
+        {
+            try
+            {
+                var reservation = await _context.reservation.FirstOrDefaultAsync(c => c.ReservationID == id);
+
+                if (reservation == null)
+                {
+                    return NotFound(); // Return 404 Not Found if reservation with the given id is not found
+                }
+
+                return Ok(reservation);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                _logger.LogError(ex, "An error occurred while retrieving reservation by ID.");
+
+                // Return a simple error message instead of the full exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+
     }
 }

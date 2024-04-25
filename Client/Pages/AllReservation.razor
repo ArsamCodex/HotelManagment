@@ -11,7 +11,7 @@
             <th>Guest Name</th>
             <th>Check-In Date</th>
             <th>Check-Out Date</th>
-            <!-- Add more table headers as needed -->
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -23,7 +23,9 @@
                 <td>@reservation.FirstName</td>
                 <td>@reservation.CheckInDate</td>
                 <td>@reservation.CheckOutDate</td>
-                <!-- Add more table cells for additional data properties -->
+                <td><a href="ReservationDetailsAdmin/@reservation.ReservationID" class="btn btn-primary m-1">View</a></td>
+                <td><a href="ReservationEditAdmin/@reservation.ReservationID" class="btn btn-warning m-1">Edit</a></td>
+                <td><a @onclick="Delete_Click" class="btn btn-danger m-1">Delete</a></td>
             </tr>
         }
     </tbody>
@@ -46,5 +48,9 @@
             ReservationListForAdmin = await Http.GetFromJsonAsync < List<Reservation>>($"Administration/GetAllReservation");
 
         }
+    }
+    public async Task Delete_Click()
+    {
+        
     }
 }
