@@ -20,5 +20,7 @@ namespace HotelManagment.Shared
         public bool NeedRepair { get; set; }
         public DateTime? StartReperation { get; set; }
         public DateTime? EndReperation { get; set; }
+        public string? StaffStartedAction { get; set; }
+        public string? StaffEndedAction { get; set; }
     }
 }

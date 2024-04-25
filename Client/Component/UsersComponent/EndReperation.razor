@@ -1,0 +1,20 @@
+﻿@using HotelManagment.Shared
+<button @onclick="OnClickAsync" >End Reperation</button>
+
+@code {
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    [Parameter]
+    public RoomInspection RoomInspection { get; set; }
+    private async Task OnClickAsync()
+    {
+
+       
+        await OnClick.InvokeAsync(RoomInspection);
+ 
+
+
+
+    }
+}

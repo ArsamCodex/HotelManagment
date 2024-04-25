@@ -29,11 +29,18 @@
     <hr />
     <center> <h5 style="font-weight:bold">Room Problem Description </h5></center>
     <h5>@roomInspection.ProblemDescription</h5>
+    <hr />
+
     @if (!startDateExists)
     {
         <HotelManagment.Client.Component.ButtonComponent OnClick="CallDatabase" RoomInspection="roomInspection"></HotelManagment.Client.Component.ButtonComponent>
     }
 
+    <br />
+    @if (Enddate)
+    {
+        <HotelManagment.Client.Component.UsersComponent.EndReperation RoomInspection="roomInspection" OnClick="EndRep"></HotelManagment.Client.Component.UsersComponent.EndReperation>
+    }
 </div>
 <!---
 @if (!startDateExists)
@@ -45,7 +52,7 @@ else
     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger" @onclick="EndRepair" >End Repair</button>
 
 }-->
-@Message
+
 
 @code {
     [Parameter]
@@ -67,6 +74,9 @@ else
 
             roomInspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
             await CheckStartDateInDatabase();
+            var inspection = await Http.GetFromJsonAsync<RoomInspection>($"Inspection/technical-problems/{TechnicalId}");
+            startDateExists = inspection.StartReperation != null;
+            Enddate = inspection.EndReperation == null;
         }
     }
     /*
@@ -112,7 +122,7 @@ else
             roomInspection.StartReperation = DateTime.Now;
 
 
-
+            roomInspection.StaffStartedAction = user2;
             var response = await Http.PutAsJsonAsync($"Inspection/UpdateInspection/{TechnicalId}", roomInspection);
             if (response.IsSuccessStatusCode)
             {
@@ -135,6 +145,31 @@ else
             StateHasChanged();
         }
     }
+    bool Enddate;
+    public async Task EndRep()
+    {
+    
+        if (Enddate)
+        {
+            roomInspection.EndReperation = DateTime.Now;
+            roomInspection.StaffEndedAction = user2;
+            var response = await Http.PutAsJsonAsync($"Inspection/UpdateInspection/{TechnicalId}", roomInspection);
+            if (response.IsSuccessStatusCode)
+            {
+                var updatedRoomInspection = await response.Content.ReadFromJsonAsync<RoomInspection>();
+                if (updatedRoomInspection != null)
+                {
+
+                }
+                else
+                {
+                    // Handle error: Unable to deserialize the updated RoomInspection object from the response
+                }
+            }
+
+            StateHasChanged();
+        }
+    }
+
+
 }
-
-

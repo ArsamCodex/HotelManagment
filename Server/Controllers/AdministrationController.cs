@@ -9,11 +9,13 @@ using HotelManagment.Client.Pages;
 using HotelManagment.Server.Models;
 using HotelManagment.Client.DTos;
 using static Duende.IdentityServer.Models.IdentityResources;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace HotelManagment.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    //Admins
     public class AdministrationController : Controller
     {
         public readonly ApplicationDbContext _context;
@@ -332,7 +334,33 @@ namespace HotelManagment.Server.Controllers
             }
         }
 
+        [HttpGet("CheckEndRepairCondition")]
+        public async Task<IActionResult> GetCheckCondition()
+        {
+            try
+            {
+                bool isTrue = false;
 
+                // Your query logic to check the condition
+                var technicalProb = await _context.roomsInspection.FirstOrDefaultAsync(d => d.StaffStartedAction != null && d.StaffEndedAction == null);
+         
+                if (technicalProb != null)
+                {
+                    isTrue = true;
+                }
+
+                // Return true or false based on the condition
+                return Ok(isTrue);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"An error occurred: {ex.Message}");
+
+                // Return an error response
+                return StatusCode(500, "An error occurred while checking the condition.");
+            }
+        }
 
     }
 }

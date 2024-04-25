@@ -133,8 +133,10 @@ namespace HotelManagment.Server.Controllers
                     result.NeedRepair = roomInspection.NeedRepair;
                     result.StartReperation = roomInspection.StartReperation;
                     result.EndReperation = roomInspection.EndReperation;
+                    result.StaffStartedAction = roomInspection.StaffStartedAction;
+                    result.StaffEndedAction = roomInspection.StaffEndedAction;
                     await _context.SaveChangesAsync();
-
+                    return Ok(result);
                    
                 }
             }
@@ -143,7 +145,7 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Error updating data");
             }
-            return null;
+            return BadRequest() ;
         }
         [HttpGet("RepairsRoomForAdmin")]
         //Admin
