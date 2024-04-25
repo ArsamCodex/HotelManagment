@@ -10,29 +10,34 @@
 <br />
 
 <table class="table">
-        <thead>
-            <tr>
-        <th style="width:10%;background-color:#E5E4E2">Id</th>
-        <th style="width:22%;background-color:#E5E4E2">UserName</th>
-        <th style="width:30%;background-color:#E5E4E2">Email</th>
+    <thead>
+        <tr>
+            <th style="width:10%;background-color:#E5E4E2">Id</th>
+            <th style="width:22%;background-color:#E5E4E2">UserName</th>
+            <th style="width:30%;background-color:#E5E4E2">Email</th>
             <th style="width:15%;background-color:#E5E4E2">Email Confirmed</th>
             <th style="width:15%;background-color:#E5E4E2">Phone</th>
-
-            <th style="width:15%;background-color:#E5E4E2">View</th>
-            <th style="width:15%;background-color:#E5E4E2">Edit</th>
-            <th style="width:15%;background-color:#E5E4E2">Delete</th>
-
-
-    </tr>
-</thead>
-<tbody>
-    @foreach (var user in users)
-    {
-       <HotelManagment.Client.Component.UsersComponent.UserOneComponent userDto="user"></HotelManagment.Client.Component.UsersComponent.UserOneComponent>
-    }
-</tbody>
+            <th style="width:15%;background-color:#E5E4E2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@(user.EmailConfirmed ? "Yes" : "No")</td>
+                <td>@user.PhoneNumber</td>
+                <td>
+                <td><a href="UserDetails/@user.Id" class="btn btn-primary m-1">View</a></td>
+                <td><a href="UserDetailsEdit/@user.Id" class="btn btn-warning m-1">Edit</a></td>
+                <td><a @onclick="Delete_Click" class="btn btn-danger m-1">Delete</a></td>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
-
 @code {
     public List<UserDto> users = new List<UserDto>();
     public string user2 { get; set; }
@@ -67,5 +72,8 @@
 
     }
 
-    
+    public async Task Delete_Click()
+    {
+        
+    }
 }

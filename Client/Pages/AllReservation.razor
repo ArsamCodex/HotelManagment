@@ -1,5 +1,50 @@
 ﻿@page "/AllReservation"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Server.Models;
+@using HotelManagment.Shared
+<table class="table">
+    <thead>
+        <tr>
+            <th>Reservation ID</th>
+            <th>Room Number</th>
+            <th>Guest Name</th>
+            <th>Check-In Date</th>
+            <th>Check-Out Date</th>
+            <!-- Add more table headers as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reservation in ReservationListForAdmin)
+        {
+            <tr>
+                <td>@reservation.ReservationID</td>
+                <td>@reservation.RoomID</td>
+                <td>@reservation.FirstName</td>
+                <td>@reservation.CheckInDate</td>
+                <td>@reservation.CheckOutDate</td>
+                <!-- Add more table cells for additional data properties -->
+            </tr>
+        }
+    </tbody>
+</table>
+
 
 @code {
+    public List<Reservation> ReservationListForAdmin = new List<Reservation>();
+    public string user2 { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
 
+            ReservationListForAdmin = await Http.GetFromJsonAsync < List<Reservation>>($"Administration/GetAllReservation");
+
+        }
+    }
 }

@@ -362,5 +362,65 @@ namespace HotelManagment.Server.Controllers
             }
         }
 
+        [HttpGet("GetAllReservation")]
+        public async Task<IActionResult> AllReservationAdmin()
+        {
+            try
+            {
+                var rooms = await _context.reservation.ToListAsync();
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("AdminDeleteReservation/{id}")]
+        public async Task<ActionResult<RoomInspection>> DeleteReservationAdmin(string id)
+        {
+            try
+            {
+                var ArticleToDelete = await _context.reservation.FirstOrDefaultAsync(e => e.ReservationID.Equals(id));
+
+                if (ArticleToDelete == null)
+                {
+                    return NotFound($"Employee with Id = {id} not found");
+                }
+                _context.reservation.Remove(ArticleToDelete);
+                await _context.SaveChangesAsync();
+                return Ok(ArticleToDelete);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error deleting data");
+            }
+
+        }
+
+        [HttpDelete("AdminDeleteUser/{id}")]
+        public async Task<ActionResult<RoomInspection>> DeleteUserAdmin(string id)
+        {
+            try
+            {
+                var ArticleToDelete = await _context.Users.FirstOrDefaultAsync(e => e.Id.Equals(id));
+
+                if (ArticleToDelete == null)
+                {
+                    return NotFound($"Employee with Id = {id} not found");
+                }
+                _context.Users.Remove(ArticleToDelete);
+                await _context.SaveChangesAsync();
+                return Ok(ArticleToDelete);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error deleting data");
+            }
+
+        }
     }
 }
