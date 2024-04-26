@@ -1,0 +1,119 @@
+﻿@page "/ReservationEditAdmin/{id:int}"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Server.Models;
+@using HotelManagment.Shared
+@inject NavigationManager manager
+
+<h4>Edit Reservation</h4>
+<div class="form-container">
+    <EditForm Model="@reservationRoom" OnValidSubmit="@HandleValidSubmit1">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="reservationRoom.Email" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Email </label>
+            <ValidationMessage For="@(() => reservationRoom.Email)" />
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="reservationRoom.FirstName" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">First Name </label>
+            <ValidationMessage For="@(() => reservationRoom.FirstName)" />
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="reservationRoom.LastName" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Last Name </label>
+            <ValidationMessage For="@(() => reservationRoom.LastName)" />
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="reservationRoom.Adress" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Adress </label>
+            <ValidationMessage For="@(() => reservationRoom.Adress)" />
+
+        </div>
+        <select @bind="reservationRoom.gender">
+            <option value="">Gender</option>
+            @foreach (var gender in Enum.GetValues(typeof(Gender)))
+            {
+                <option value="@gender">@gender</option>
+            }
+        </select>
+
+
+
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="reservationRoom.PhoneNumber" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Phone Number </label>
+            <ValidationMessage For="@(() => reservationRoom.PhoneNumber)" />
+
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputDate @bind-Value="reservationRoom.CheckInDate" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Checkin Date</label>
+
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputDate @bind-Value="reservationRoom.CheckOutDate" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Checkout Date</label>
+
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="reservationRoom.HowManyPerosn" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">How Manny Persons</label>
+        </div>
+        <div class="checkbox mb-3">
+            <InputCheckbox @bind-Value="reservationRoom.IsPaid" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+            <label for="email">Is Paid</label>
+        </div>
+
+
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="reservationRoom.Amount" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Amount</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="reservationRoom.Staff" readonly id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Staff</label>
+        </div>
+        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger">Edit</button>
+    </EditForm>
+
+</div>
+
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    public string user2 { get; set; }
+    public Reservation reservationRoom = new Reservation();
+    public int selectedroomNumber { get; set; }
+    IEnumerable<Room> rooms = new List<Room>();
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+            reservationRoom = await Http.GetFromJsonAsync<Reservation>($"Administration/GetReservationByIdAdmin/{id}");
+
+        }
+    }
+    public async Task HandleValidSubmit1()
+    {
+        var x = await Http.PutAsJsonAsync<Reservation>($"Administration/UpdateReservationAdmin", reservationRoom);
+        manager.NavigateTo("/Allreservation");
+    }
+}

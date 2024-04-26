@@ -447,5 +447,44 @@ namespace HotelManagment.Server.Controllers
             }
         }
 
+        [HttpPut("UpdateReservationAdmin")]
+        public async Task<ActionResult> UpdatReservationAdmin(Reservation    reservationn)
+        {
+            try
+            {
+
+                var result = await _context.reservation
+               .FirstOrDefaultAsync(e => e.ReservationID == reservationn.ReservationID);
+                if (result != null)
+                {
+                    result.FirstName = reservationn.FirstName;
+                    result.LastName = reservationn.LastName;
+                    result.Email = reservationn.Email;
+                    result.Adress = reservationn.Adress;
+                  //  result.RoomID = reservationn.RoomID;
+                    result.HowManyPerosn = reservationn.HowManyPerosn;
+                    result.CheckInDate = reservationn.CheckOutDate;
+                    result.CheckOutDate = reservationn.CheckOutDate;
+                    result.IsPaid = reservationn.IsPaid;
+                    result.IsReserved = reservationn.IsReserved;
+                    result.Amount = reservationn.Amount;
+
+                    result.PhoneNumber = reservationn.PhoneNumber;
+                    result.Staff = reservationn.Staff;
+                    result.DigitalSignuture = reservationn.DigitalSignuture;
+                    result.gender = reservationn.gender;
+                    await _context.SaveChangesAsync();
+
+
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating data");
+            }
+            return null;
+        }
+
     }
 }
