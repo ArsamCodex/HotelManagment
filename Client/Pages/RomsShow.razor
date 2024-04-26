@@ -1,0 +1,56 @@
+﻿@page "/Rooms"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Shared
+
+<h1>List of Rooms</h1>
+
+@if (rooms.Any())
+{
+    <div class="room-cards">
+        <div class="d-flex flex-wrap">
+            @foreach (var room in rooms)
+            {
+                <div class="card m-3" style="min-width: 18rem; max-width: 30.5%; flex-basis: 23%;">
+                    <!-- Adjusted flex-basis -->
+                    <div class="card-header">
+                        <h3>@room.RoomNumer</h3>
+                    </div>
+                    <img src="@($"{baseImagePath}{room.Image}")" alt="Room Image" class="room-image">
+                </div>
+            }
+        </div>
+    </div>
+
+
+}
+else
+{
+    <p>No rooms available.</p>
+}
+
+@code {
+    public string user2 { get; set; }
+    IEnumerable<Room> rooms = new List<Room>();
+    string baseImagePath = "/Image/Rooms/";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+       
+
+
+           rooms = await Http.GetFromJsonAsync<List<Room>>("/Reservation/rooms");
+         
+
+        }
+    }
+}
