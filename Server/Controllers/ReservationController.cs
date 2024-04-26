@@ -141,7 +141,53 @@ namespace HotelManagment.Server.Controllers
             return null;
         }
 
+        [HttpGet("roomsCount")]
+        public async Task<IActionResult> AllRoomsFreeCount()
+        {
+            try
+            {
+                var rooms = await _context.rooms.ToListAsync();
+                var x = rooms.Count(c => c.CheckOutDate == null);
+                return Ok(x);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "An error occurred while fetching rooms.");
+            }
+        }
 
+
+        [HttpGet("ReservationCount")]
+        public async Task<IActionResult> GetReservationCount()
+        {
+            try
+            {
+                var rooms = await _context.reservation.ToListAsync();
+                var x = rooms.Count(c => c.CheckOutDate != null && c.CheckInDate != null);
+                return Ok(x);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "An error occurred while fetching rooms.");
+            }
+        }
+        [HttpGet("PostsCount")]
+        public async Task<IActionResult> GetPostCount()
+        {
+            try
+            {
+                var rooms = await _context.post.ToListAsync();
+                var x = rooms.Count(c => c.ReceivedTime != null);
+                return Ok(x);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "An error occurred while fetching rooms.");
+            }
+        }
     }
 
 }

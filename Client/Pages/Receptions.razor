@@ -1,0 +1,150 @@
+﻿@page "/Reception"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Shared
+
+
+
+<div class="form-container">
+    <EditForm Model="@post" OnValidSubmit="@HandleValidSubmit1">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="post.Barcode" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Barcode </label>
+        </div>
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="post.ForWhichRoom" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Room Number </label>
+        </div>
+        <div class="form-floating mb-3">
+            <InputDate @bind-Value="post.ReceivedTime" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">First Name </label>
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="user2" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Staff </label>
+        </div>
+        <div class="checkbox mb-3">
+            <InputCheckbox @bind-Value="IsSigned" id="isPaid" class="form-check-input" placeholder="name@example.com" />
+            <label for="email">Is Signed Parcel</label>
+        </div>
+
+        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger">Add Post</button>
+    </EditForm>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Post ID</th>
+            <th>Barcode</th>
+            <th>Received Time</th>
+            <th>For Which Room</th>
+            <th>Staff ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in AllsPosts)
+        {
+            <tr>
+                <td>@post.PostID</td>
+                <td>@post.Barcode</td>
+                <td>@post.ReceivedTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@post.ForWhichRoom</td>
+                <td>@post.StaffId</td>
+            </tr>
+        }
+    </tbody>
+</table>
+            @MessageUSer
+
+@IsSigned
+@code {
+    public Post post { get; set; } = new Post();
+    public string user2 { get; set; }
+    public string MessageUSer { get; set; }
+    List<Post> AllsPosts = new List<Post>();
+    public bool IsSigned{ get; set; }
+    public string userEmail2 { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            post.ReceivedTime = DateTime.Now;
+            var x = await Http.GetFromJsonAsync<List<Post>>("/Reception/AllPosts");
+            AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today).ToList();
+        }
+    }
+
+    public async Task HandleValidSubmit1()
+    {
+        if (IsSigned)
+        {
+            var response2 = await Http.PostAsJsonAsync($"Reception/AddPackage", post);
+            if (response2.IsSuccessStatusCode)
+            {
+                await SendEmailAsync();
+                MessageUSer = $" Post whith Barcode {post.Barcode}  Added To database";
+                post = new Post();
+                post.StaffId = user2;
+                var x = await Http.GetFromJsonAsync<List<Post>>("/Reception/AllPosts");
+                AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today).TakeLast(10).ToList();
+                StateHasChanged();
+            }
+        }
+        if (!IsSigned)
+        {
+            post.StaffId = user2;
+            var response = await Http.PostAsJsonAsync($"Reception/AddPackage", post);
+            if (response.IsSuccessStatusCode)
+            {
+                MessageUSer = $" Post whith Barcode {post.Barcode}  Added To database";
+                post = new Post();
+                post.StaffId = user2;
+                var x = await Http.GetFromJsonAsync<List<Post>>("/Reception/AllPosts");
+                AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today).ToList();
+                StateHasChanged();
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+    }
+    private async Task SendEmailAsync()
+    {
+        try
+        {
+            //get email of user from room number
+            var x2 = await Http.GetAsync($"Administration/GetAllReservation/{post.ForWhichRoom}");
+            var email = await x2.Content.ReadAsStringAsync();
+
+            // Now you can use the email address as needed
+            // For example, you can assign it to a variable or use it in further processing
+            userEmail2 = email;
+            EmailRequest request = new EmailRequest();
+            {
+                request.Email = userEmail2;
+                request.HtmlMessage = $"You Have Signed Parcel Please come to The reception . Barcode  IS : {post.Barcode}";
+                request.Subject = "You Have Signed PArcel to Receive";
+            };
+
+            var x = await Http.PostAsJsonAsync("/Reservation/Email", request);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while sending the email: {ex}");
+
+            // Handle exceptions
+            // You might want to display an error message to the user or log the exception
+        }
+    }
+}

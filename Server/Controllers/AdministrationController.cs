@@ -10,6 +10,7 @@ using HotelManagment.Server.Models;
 using HotelManagment.Client.DTos;
 using static Duende.IdentityServer.Models.IdentityResources;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Reflection.Metadata;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -484,6 +485,24 @@ namespace HotelManagment.Server.Controllers
                     "Error updating data");
             }
             return null;
+        }
+
+        [HttpGet("GetAllReservation/{RoomNumber}")]
+        public async Task<IActionResult> GetAllReservation2(int RoomNumber)
+        {
+            try
+            {
+                var emails = await _context.reservation
+              .Where(c => c.RoomID == RoomNumber && c.CheckInDate !=null && c.CheckOutDate !=null)
+              .Select(r => r.Email) // Select only the email address
+               .FirstOrDefaultAsync();
+                return Ok(emails);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "An error occurred while fetching reservations.");
+            }
         }
 
     }

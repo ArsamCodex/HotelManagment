@@ -1,0 +1,35 @@
+﻿@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Shared
+<br />
+<center><h4>Reservered Room Count  </h4></center>
+<center><h5><b>@ReservationCount</b></h5></center>
+@code {
+    public int ReservationCount { get; set; }
+    public string user2 { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            var response = await Http.GetAsync("/Reservation/ReservationCount");
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the response content as string
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                // Parse the response body as an integer
+                ReservationCount = int.Parse(responseBody);
+            }
+            else
+            {
+                // Handle the case where the request was not successful
+                // For example, log the error or handle it appropriately
+            }
+        }
+    }
+
+}

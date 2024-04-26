@@ -4,6 +4,7 @@ using HotelManagment.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240426111810_Post23")]
+    partial class Post23
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d80d2bd4-6b34-44fc-b97d-adfe96741f18",
+                            Id = "89b277dc-11db-46a3-ac35-1163d7b3fff8",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0f17a56e-bf28-4027-b15f-15a88c70b4c9",
+                            ConcurrencyStamp = "9ce5daac-cba1-4a9a-917e-bac1910950c0",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -240,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c7d86519-0e98-4b32-b0c9-65fd24f5d3c7",
+                            SecurityStamp = "fd616b02-a6b9-43a0-82a4-9d1e0c2df4a6",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -327,13 +330,31 @@ namespace HotelManagment.Server.Migrations
                     b.Property<DateTime>("ReceivedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("StaffId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ReceptionId")
+                        .HasColumnType("int");
 
                     b.HasKey("PostID");
 
+                    b.HasIndex("ReceptionId");
+
                     b.ToTable("post");
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Reception", b =>
+                {
+                    b.Property<int>("ReceptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReceptionId"));
+
+                    b.Property<string>("staffId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ReceptionId");
+
+                    b.ToTable("reception");
                 });
 
             modelBuilder.Entity("HotelManagment.Shared.Repair", b =>
@@ -468,7 +489,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f484dbd2-62e1-4b6b-a2de-eb41c9b363ee",
+                            Id = "badcd42b-2d07-4726-ad75-e0bcb96fb8e2",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -565,8 +586,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "d80d2bd4-6b34-44fc-b97d-adfe96741f18",
-                            RoleId = "f484dbd2-62e1-4b6b-a2de-eb41c9b363ee"
+                            UserId = "89b277dc-11db-46a3-ac35-1163d7b3fff8",
+                            RoleId = "badcd42b-2d07-4726-ad75-e0bcb96fb8e2"
                         });
                 });
 
@@ -589,6 +610,17 @@ namespace HotelManagment.Server.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Post", b =>
+                {
+                    b.HasOne("HotelManagment.Shared.Reception", "Reception")
+                        .WithMany("Posts")
+                        .HasForeignKey("ReceptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reception");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -640,6 +672,11 @@ namespace HotelManagment.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Reception", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

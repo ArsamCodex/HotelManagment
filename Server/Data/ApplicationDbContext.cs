@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Reflection.Metadata;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HotelManagment.Server.Data
 {
@@ -25,11 +26,12 @@ namespace HotelManagment.Server.Data
         public DbSet<Room> rooms { get; set; } = default;
         public DbSet<RoomInspection> roomsInspection { get; set; } = default;
         public DbSet<Repair> repair { get; set; } = default;
-
+        public DbSet<Post> post { get; set; } = default;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
 
             // Create initial user and role
             SeedInitialData(modelBuilder);
