@@ -79,7 +79,10 @@
             user2 = user.FindFirst(c => c.Type == "sub")?.Value;
             post.ReceivedTime = DateTime.Now;
             var x = await Http.GetFromJsonAsync<List<Post>>("/Reception/AllPosts");
-            AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today).ToList();
+            AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today)
+              .TakeLast(10)
+               .OrderByDescending(c => c.ReceivedTime)
+           .ToList(); ;
         }
     }
 
@@ -95,12 +98,14 @@
                 post = new Post();
                 post.StaffId = user2;
                 var x = await Http.GetFromJsonAsync<List<Post>>("/Reception/AllPosts");
-                AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today).TakeLast(10).ToList();
+                AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today)
+               .TakeLast(10)
+               .OrderByDescending(c => c.ReceivedTime)
+           .ToList();
                 StateHasChanged();
             }
         }
-        if (!IsSigned)
-        {
+     
             post.StaffId = user2;
             var response = await Http.PostAsJsonAsync($"Reception/AddPackage", post);
             if (response.IsSuccessStatusCode)
@@ -109,14 +114,17 @@
                 post = new Post();
                 post.StaffId = user2;
                 var x = await Http.GetFromJsonAsync<List<Post>>("/Reception/AllPosts");
-                AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today).ToList();
+            AllsPosts = x.Where(c => c.StaffId == user2 && c.ReceivedTime.Date == DateTime.Today)
+              .TakeLast(10)
+               .OrderByDescending(c => c.ReceivedTime)
+           .ToList();
                 StateHasChanged();
             }
             else
             {
                 // Handle error
             }
-        }
+        
     }
     private async Task SendEmailAsync()
     {
