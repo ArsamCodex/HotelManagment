@@ -461,7 +461,7 @@ namespace HotelManagment.Server.Controllers
                     result.LastName = reservationn.LastName;
                     result.Email = reservationn.Email;
                     result.Adress = reservationn.Adress;
-                  //  result.RoomID = reservationn.RoomID;
+                    result.RoomID = reservationn.RoomID;
                     result.HowManyPerosn = reservationn.HowManyPerosn;
                     result.CheckInDate = reservationn.CheckOutDate;
                     result.CheckOutDate = reservationn.CheckOutDate;

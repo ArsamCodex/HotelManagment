@@ -79,6 +79,17 @@
             <label for="email">Amount</label>
         </div>
 
+        <div class="col-sm-10">
+
+            <select @bind="selectedroomNumber">
+                <option value="">Choose room</option>
+                @foreach (var room in rooms)
+                {
+                    <option value="@room.RoomNumer">@room.RoomNumer @room.HowMannhyPersons </option>
+                }
+            </select>
+            <label for="email">Rooms Free</label>
+        </div>
         <div class="form-floating mb-3">
             <InputText @bind-Value="reservationRoom.Staff" readonly id="email" class="form-control" placeholder="name@example.com" />
             <label for="email">Staff</label>
@@ -89,13 +100,13 @@
 </div>
 
 
-
+@selectedroomNumber
 @code {
     [Parameter]
     public int id { get; set; }
     public string user2 { get; set; }
     public Reservation reservationRoom = new Reservation();
-    public int selectedroomNumber { get; set; }
+    public int selectedroomNumber;
     IEnumerable<Room> rooms = new List<Room>();
     protected override async Task OnInitializedAsync()
     {
@@ -108,11 +119,13 @@
             user2 = user.FindFirst(c => c.Type == "sub")?.Value;
 
             reservationRoom = await Http.GetFromJsonAsync<Reservation>($"Administration/GetReservationByIdAdmin/{id}");
-
+            var x = await Http.GetFromJsonAsync<List<Room>>("/Reservation/rooms");
+            rooms = x.Where(c => c.CheckOutDate == null).ToList();
         }
     }
     public async Task HandleValidSubmit1()
     {
+        reservationRoom.RoomID = selectedroomNumber;
         var x = await Http.PutAsJsonAsync<Reservation>($"Administration/UpdateReservationAdmin", reservationRoom);
         manager.NavigateTo("/Allreservation");
     }
