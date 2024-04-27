@@ -4,6 +4,7 @@ using HotelManagment.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240427143332_AddMessageClass")]
+    partial class AddMessageClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a74f992e-0293-4ec3-9b18-d9368cf1db73",
+                            Id = "75b71b12-7177-4733-8f21-c798d179b82f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c48a3c01-edb5-4288-a543-e720163525d7",
+                            ConcurrencyStamp = "d07f235c-8ade-4a15-8715-c4799db660db",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -240,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c23ce7ae-89f6-4e8c-9723-408dea40c55d",
+                            SecurityStamp = "37cc32fa-440c-48c7-ba1c-a407140e589e",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -439,30 +442,6 @@ namespace HotelManagment.Server.Migrations
                     b.ToTable("roomsInspection");
                 });
 
-            modelBuilder.Entity("HotelManagment.Shared.SendMessage", b =>
-                {
-                    b.Property<int>("SendMessageID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SendMessageID"));
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MessageTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("roomNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("SendMessageID");
-
-                    b.ToTable("sendMessage");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -492,7 +471,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "44a2e8cf-fc94-4403-9a97-75f1872041f6",
+                            Id = "46cbe2c5-bd99-4b2a-903e-3dc0c0b24b43",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -589,8 +568,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "a74f992e-0293-4ec3-9b18-d9368cf1db73",
-                            RoleId = "44a2e8cf-fc94-4403-9a97-75f1872041f6"
+                            UserId = "75b71b12-7177-4733-8f21-c798d179b82f",
+                            RoleId = "46cbe2c5-bd99-4b2a-903e-3dc0c0b24b43"
                         });
                 });
 

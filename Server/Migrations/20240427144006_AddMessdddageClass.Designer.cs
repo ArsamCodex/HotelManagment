@@ -4,6 +4,7 @@ using HotelManagment.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240427144006_AddMessdddageClass")]
+    partial class AddMessdddageClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a74f992e-0293-4ec3-9b18-d9368cf1db73",
+                            Id = "708302f9-3d59-4493-970a-d5c6aa2eb28c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c48a3c01-edb5-4288-a543-e720163525d7",
+                            ConcurrencyStamp = "500b1961-8df1-4f87-87aa-5ddc0e0b74aa",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -240,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c23ce7ae-89f6-4e8c-9723-408dea40c55d",
+                            SecurityStamp = "afe38007-f894-4999-befd-6aa3a2a3bf46",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -451,10 +454,6 @@ namespace HotelManagment.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MessageTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("roomNumber")
                         .HasColumnType("int");
 
@@ -492,7 +491,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "44a2e8cf-fc94-4403-9a97-75f1872041f6",
+                            Id = "aac4c6a0-5a75-4261-8982-2b6038b32ff2",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -589,8 +588,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "a74f992e-0293-4ec3-9b18-d9368cf1db73",
-                            RoleId = "44a2e8cf-fc94-4403-9a97-75f1872041f6"
+                            UserId = "708302f9-3d59-4493-970a-d5c6aa2eb28c",
+                            RoleId = "aac4c6a0-5a75-4261-8982-2b6038b32ff2"
                         });
                 });
 

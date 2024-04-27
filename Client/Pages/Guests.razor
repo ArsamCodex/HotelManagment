@@ -4,6 +4,9 @@
 @using HotelManagment.Shared
 @using HotelManagment.Server.Models
 @inject NavigationManager manager
+<div style="width: 100%; background-color: @currentColor;border:1px solid black;height:50px">
+   <h3 style="color:Red"> @MessageToUser</h3>
+</div>
 <div class="input-group mb-3">
     <input @bind="searchQuery" type="text" class="form-control" placeholder=" Enter Your Digital Signuture">
     <button class="btn btn-primary" @onclick="Search">Search</button>
@@ -72,14 +75,40 @@
             <p>Book Meeting Room</p>
         </div>
     </div>
+    <hr />
+    <h5>Send Message To Administration </h5>
+    <EditForm Model="@sendMessage" OnValidSubmit="@HandleValidSubmit2">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="sendMessage.MessageTitle" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Message Title </label>
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="sendMessage.Message" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Your Message  </label>
+
+        </div>
+ 
+      
+
+        <button type="submit" class="w-100 btn btn-lg btn-danger">Send Message To Admin</button>
+
+    </EditForm>
+
+
 }
 @code {
     private string searchQuery;
     private string searchResult;
+    private string currentColor = "white";
+    public string MessageToUser { get; set; }
     public string user2 { get; set; }
     public Reservation reservation { get; set; } = new Reservation();
     public bool showdata { get; set; } = false;
-
+    public SendMessage sendMessage { get; set; } = new SendMessage();
     private void RedirectToPage(string url)
     {
         manager.NavigateTo(url);
@@ -101,5 +130,32 @@
 
         }
     }
+    public async Task HandleValidSubmit2()
+    {
+        SendMessage mess = new SendMessage
+            {
+                Message = sendMessage.Message,
+                roomNumber = reservation.RoomID,
+                MessageTitle = sendMessage.MessageTitle
+            };
+        await Http.PostAsJsonAsync<SendMessage>("/SendMessage/SendMessaget", mess);
+        ChangeColor();
+        sendMessage = new SendMessage();
+        MessageToUser = "Your Message Sent To Administration";
+        EmailRequest request = new EmailRequest();
+        {
+            request.Email = reservation.Email;
+            request.HtmlMessage = $" A Copy Of Your Email To Administration :{mess.Message} ";
+            request.Subject = mess.MessageTitle;
+        };
+
+        var x = await Http.PostAsJsonAsync("/Reservation/Email", request);
+
+    }
+    private void ChangeColor()
+    {
+        currentColor = "lightgreen";
+    }
+    
 }
 

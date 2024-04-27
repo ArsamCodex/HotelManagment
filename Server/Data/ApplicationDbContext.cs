@@ -27,7 +27,7 @@ namespace HotelManagment.Server.Data
         public DbSet<RoomInspection> roomsInspection { get; set; } = default;
         public DbSet<Repair> repair { get; set; } = default;
         public DbSet<Post> post { get; set; } = default;
-
+        public DbSet<SendMessage> sendMessage { get; set; } = default;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
