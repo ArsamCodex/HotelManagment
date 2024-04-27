@@ -1,0 +1,105 @@
+﻿@page "/Guests"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Shared
+@using HotelManagment.Server.Models
+@inject NavigationManager manager
+<div class="input-group mb-3">
+    <input @bind="searchQuery" type="text" class="form-control" placeholder=" Enter Your Digital Signuture">
+    <button class="btn btn-primary" @onclick="Search">Search</button>
+</div>
+<style>
+    .container {
+        display: flex;
+    }
+
+    .column {
+        flex: 1; /* Each div takes equal space */
+        border: 1px solid black;
+        padding: 10px;
+        margin: 0 5px; /* Adjust margin as needed */
+    }
+
+    .box1 {
+        display: flex;
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+        background-color: yellow;
+        width: 15%;
+        border: solid 2px red;
+        margin: 0 5px; /* Adjust margin as needed */
+    }
+
+    .box1 p {
+        margin-top: 10px; /* Adjust the top margin to move the text downwards */
+    }
+</style>
+@if (showdata)
+{
+    <div class="container">
+        <div class="column">
+            <p><strong>Room ID:</strong> @reservation.RoomID</p>
+        </div>
+        <div class="column">
+            <p><strong>Email:</strong> @reservation.Email</p>
+        </div>
+        <div class="column">
+            <p><strong>Name:</strong> @reservation.FirstName</p>
+        </div>
+        <div class="column">
+            <p><strong>Digital Signature:</strong> @reservation.DigitalSignuture</p>
+        </div>
+    </div><br>
+    <div style="width:100%;border:solid 1px black"><br>
+    <center><h5><b>Your Ticked Included Service</b></h5></center></div>
+    <br>
+    <br>
+    <div class="container">
+
+        <div class="box1" @onclick="@(() => RedirectToPage("Parking"))" onmouseover="this.style.backgroundColor='lightgreen';" onmouseout="this.style.backgroundColor='yellow';">
+           <p>Parking</p>
+        </div>
+        <div class="box1" @onclick="@(() => RedirectToPage("Gym"))" onmouseover="this.style.backgroundColor='lightgreen';" onmouseout="this.style.backgroundColor='yellow';">
+            <p>Gym</p>
+        </div>
+        <div class="box1" @onclick="@(() => RedirectToPage("Swim Pool"))" onmouseover="this.style.backgroundColor='lightgreen';" onmouseout="this.style.backgroundColor='yellow';">
+            <p>Swim</p>
+        </div>
+        <div class="box1" @onclick="@(() => RedirectToPage("Billiard"))" onmouseover="this.style.backgroundColor='lightgreen';" onmouseout="this.style.backgroundColor='yellow';">
+            <p>Billiard</p>
+        </div>
+        <div class="box1" @onclick="@(() => RedirectToPage("Meeting Room"))" onmouseover="this.style.backgroundColor='lightgreen';" onmouseout="this.style.backgroundColor='yellow';">
+            <p>Book Meeting Room</p>
+        </div>
+    </div>
+}
+@code {
+    private string searchQuery;
+    private string searchResult;
+    public string user2 { get; set; }
+    public Reservation reservation { get; set; } = new Reservation();
+    public bool showdata { get; set; } = false;
+
+    private void RedirectToPage(string url)
+    {
+        manager.NavigateTo(url);
+    }
+    public async Task Search()
+    {
+        reservation = await Http.GetFromJsonAsync<Reservation>($"Administration/GetReservationByTickeet/{searchQuery}");
+        showdata = true;
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+
+        }
+    }
+}
+

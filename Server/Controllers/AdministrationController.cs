@@ -504,6 +504,22 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(500, "An error occurred while fetching reservations.");
             }
         }
+        [HttpGet("GetReservationByTickeet/{Ticket}")]
+        public async Task<ActionResult<Reservation>> GetReservationByTicket(string Ticket)
+        {
+            try
+            {
+                var reserved = await _context.reservation
+              .Where(c => c.DigitalSignuture == Ticket && c.CheckInDate != null && c.CheckOutDate != null)
+               .FirstOrDefaultAsync();
+                return Ok(reserved);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, "An error occurred while fetching reservations.");
+            }
+        }
 
     }
 }
