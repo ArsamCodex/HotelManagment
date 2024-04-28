@@ -64,7 +64,8 @@ namespace HotelManagment.Server.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-        [HttpGet("rooms")]
+        [HttpGet("rooms"),Authorize]
+  
         public async Task<IActionResult> AllRooms()
         {
             try
