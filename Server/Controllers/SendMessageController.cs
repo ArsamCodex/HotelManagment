@@ -3,6 +3,7 @@ using HotelManagment.Server.Models;
 using HotelManagment.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -40,6 +41,20 @@ namespace HotelManagment.Server.Controllers
                 return BadRequest(ex.Message);
             }
             
+        }
+        [HttpGet("GetAllMessages")]
+        public async Task<ActionResult<SendMessage>> GetMessageAdmin()
+        {
+            try
+            {
+              var x =  await _context.sendMessage.ToListAsync();
+                return Ok(x);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

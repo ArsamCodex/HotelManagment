@@ -1,0 +1,43 @@
+﻿@page "/Messages"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Shared
+<table class="table">
+    <thead>
+        <tr>
+            <th>SendMessageID</th>
+            <th>MessageTitle</th>
+            <th>Message</th>
+            <th>RoomNumber</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in sendMessage)
+        {
+            <tr>
+                <td>@item.SendMessageID</td>
+                <td>@item.MessageTitle</td>
+                <td>@item.Message</td>
+                <td>@item.roomNumber</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    public string  user2 { get; set; }
+
+    public List<SendMessage> sendMessage { get; set; } = new List<SendMessage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            sendMessage= await Http.GetFromJsonAsync<List<SendMessage>>("/SendMessage/GetAllMessages");
+        }
+    }
+}
