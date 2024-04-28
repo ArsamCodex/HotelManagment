@@ -55,9 +55,9 @@ builder.Services.AddAuthentication(options =>
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = "https://localhost",
-                ValidAudience = "https://localhost",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("RANDOM_KEY_MUST_NOT_BE_SHAREDkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"))
+                ValidIssuer = builder.Configuration["JwtIssuer"],
+                ValidAudience = builder.Configuration["JwtAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSecurityKey"]))
             };
         });
 
