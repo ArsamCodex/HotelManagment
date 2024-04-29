@@ -4,6 +4,7 @@ using HotelManagment.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240429192409_Ordefooddhhfgd")]
+    partial class Ordefooddhhfgd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f8fd5787-6834-4161-93c3-58b9d075e972",
+                            Id = "7fa28cfc-15cd-4979-a0ac-62746677803b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9910174b-2e1b-4ee2-9e09-cf6ca1434afa",
+                            ConcurrencyStamp = "969ae927-5044-45b7-b869-7fe02fbc2a7e",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -240,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7cf09936-a1c7-4e50-8533-304b9a5ccd73",
+                            SecurityStamp = "f774afb4-fc59-4fa4-94a4-3f612e4d2df7",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -373,9 +376,8 @@ namespace HotelManagment.Server.Migrations
                     b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderedFood")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("OrderedFood")
+                        .HasColumnType("int");
 
                     b.Property<int>("roomNumber")
                         .HasColumnType("int");
@@ -568,7 +570,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "06369d8c-8191-4dd6-9060-dbe694e7452e",
+                            Id = "162413e8-aaa9-4d5b-89da-6851af7509fc",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -665,8 +667,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "f8fd5787-6834-4161-93c3-58b9d075e972",
-                            RoleId = "06369d8c-8191-4dd6-9060-dbe694e7452e"
+                            UserId = "7fa28cfc-15cd-4979-a0ac-62746677803b",
+                            RoleId = "162413e8-aaa9-4d5b-89da-6851af7509fc"
                         });
                 });
 

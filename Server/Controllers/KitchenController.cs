@@ -3,6 +3,7 @@ using HotelManagment.Server.Models;
 using HotelManagment.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagment.Server.Controllers
 {
@@ -54,6 +55,53 @@ namespace HotelManagment.Server.Controllers
             {
 
                 await _context.kitchen.AddAsync(kitchen);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpGet("GetFoodMenu")]
+        public async Task<ActionResult> GetFoodsMenu()
+        {
+            try
+            {
+                // Get the current date
+                DateTime today = DateTime.Today;
+
+                // Retrieve the last food menu item for the current day
+                var lastFoodMenu = await _context.fooMenu
+                    .Where(f => f.TodayFood.HasValue && f.TodayFood.Value.Date == today)
+                    .OrderByDescending(f => f.TodayFood)
+                    .Select(f => new FoorMenuDTO
+                    {
+                        Option1 = f.Option1,
+                        Option2 = f.Option2,
+                        Option3 = f.Option3
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (lastFoodMenu == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(lastFoodMenu);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpPost("SaveGuestOrder")]
+        public async Task<ActionResult> GerGeustOrderdFoods(OrderFood orderFood)
+        {
+            try
+            {
+                
+                await _context.orderFood.AddAsync(orderFood);
                 await _context.SaveChangesAsync();
                 return Ok();
             }

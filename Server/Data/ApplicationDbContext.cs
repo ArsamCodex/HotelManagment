@@ -31,6 +31,7 @@ namespace HotelManagment.Server.Data
 
         public DbSet<FoodMenu> fooMenu { get; set; } = default;
         public DbSet<Kitchen> kitchen { get; set; } = default;
+        public DbSet<OrderFood> orderFood { get; set; } = default;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelManagment.Client", "Cl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelManagment.Shared", "Shared\HotelManagment.Shared.csproj", "{E17A5798-59F7-45B2-AC9E-816E13870FC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotemManagmentTest", "HotemManagmentTest\HotemManagmentTest.csproj", "{EB6FEFB4-070C-4250-B394-7460C2186D70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotemManagmentTest", "HotemManagmentTest\HotemManagmentTest.csproj", "{EB6FEFB4-070C-4250-B394-7460C2186D70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

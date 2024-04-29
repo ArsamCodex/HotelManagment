@@ -1,0 +1,81 @@
+﻿@page "/GuestsOorderFood"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@using HotelManagment.Shared
+@inject NavigationManager manager
+
+<div style="width: 100%; background-color: @currentColor;border:1px solid black;height:50px">
+    <h3 style="color:Red"> @MessageToUser</h3>
+</div>
+<div class="form-container">
+    <EditForm Model="@orderFood" OnValidSubmit="@HandleValidSubmit1">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-floating mb-3">
+            <InputNumber @bind-Value="orderFood.roomNumber" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Room Number </label>
+
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputDate @bind-Value="orderFood.OrderTime" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email">Time</label>
+        </div>
+        <div class="form-floating mb-3">
+            <textarea @bind="orderFood.OrderedFood" id="problemsInitchen" class="form-control" rows="4" style="height: 100px;"></textarea>
+            <label for="email"> Any Alergic Note To kitchen  </label>
+        </div>
+        <div class="form-floating mb-3">
+            <select @bind="selectedFood" class="form-control">
+                <option value="">Choose an option</option>
+                <option value="@foodMenus.Option1">@foodMenus.Option1</option>
+                <option value="@foodMenus.Option2">@foodMenus.Option2</option>
+                <option value="@foodMenus.Option3">@foodMenus.Option3</option>
+            </select>
+            <label for="foodMenuOptions">Food Menu Options</label>
+        </div>
+        
+
+
+        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-danger">Order Food</button>
+    </EditForm>
+
+</div>
+
+@code {
+    public OrderFood orderFood { get; set; } = new OrderFood();
+    public string user2 { get; set; }
+    public string selectedFood{ get; set; }
+    private FoorMenuDTO foodMenus = new FoorMenuDTO();
+    private string currentColor = "white";
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            foodMenus =  await  Http.GetFromJsonAsync<FoorMenuDTO>("/Kitchen/GetFoodMenu");
+            orderFood.OrderTime = DateTime.Now;
+        }
+    }
+    public async Task HandleValidSubmit1()
+    {
+        orderFood.OrderedFood = selectedFood;
+        orderFood.OrderTime = DateTime.Now;
+        await Http.PostAsJsonAsync<OrderFood>("/Kitchen/SaveGuestOrder", orderFood);
+        ChangeColor();
+        MessageToUser = "Food Order Submitted ";
+       await Task.Delay(1000);
+        manager.NavigateTo("/");
+
+    }
+    public string MessageToUser { get; set; }
+
+    private void ChangeColor()
+    {
+        currentColor = "lightgreen";
+    }
+}
