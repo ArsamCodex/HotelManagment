@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240427143332_AddMessageClass")]
-    partial class AddMessageClass
+    [Migration("20240429125313_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "75b71b12-7177-4733-8f21-c798d179b82f",
+                            Id = "b582358b-9cd0-486c-9cee-15f3ccdadb84",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d07f235c-8ade-4a15-8715-c4799db660db",
+                            ConcurrencyStamp = "c7689e36-a90b-4365-808b-249341e1c83f",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -243,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "37cc32fa-440c-48c7-ba1c-a407140e589e",
+                            SecurityStamp = "f8531a77-7a7d-4ad5-b07f-33485fa68dea",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -442,6 +442,30 @@ namespace HotelManagment.Server.Migrations
                     b.ToTable("roomsInspection");
                 });
 
+            modelBuilder.Entity("HotelManagment.Shared.SendMessage", b =>
+                {
+                    b.Property<int>("SendMessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SendMessageID"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("roomNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("SendMessageID");
+
+                    b.ToTable("sendMessage");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -471,7 +495,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "46cbe2c5-bd99-4b2a-903e-3dc0c0b24b43",
+                            Id = "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -568,8 +592,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "75b71b12-7177-4733-8f21-c798d179b82f",
-                            RoleId = "46cbe2c5-bd99-4b2a-903e-3dc0c0b24b43"
+                            UserId = "b582358b-9cd0-486c-9cee-15f3ccdadb84",
+                            RoleId = "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5"
                         });
                 });
 

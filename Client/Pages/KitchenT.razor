@@ -1,0 +1,130 @@
+﻿@page "/Kitchen"
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject HttpClient Http
+@inject NavigationManager manager
+@using HotelManagment.Shared
+<div style="width: 100%; background-color: @currentColor;border:1px solid black;height:50px">
+    <h3 style="color:Red"> @MessageToUser</h3>
+</div>
+<div class="form-container">
+    <EditForm Model="@foodMenu" OnValidSubmit="@HandleValidSubmit1">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-floating mb-3">
+            <textarea @bind="foodMenu.Option1" id="problemsInitchen" class="form-control" rows="4" style="height: 100px;"></textarea>
+            <label for="email"> Menu option 1 </label>
+
+        </div>
+        <div class="form-floating mb-3">
+            <textarea @bind="foodMenu.Option2" id="problemsInitchen" class="form-control" rows="4" style="height: 100px;"></textarea>
+            <label for="email">Menu option 2</label>
+
+        </div>
+        <div class="form-floating mb-3">
+            <textarea @bind="foodMenu.Option3" id="problemsInitchen" class="form-control" rows="4" style="height: 100px;"></textarea>
+            <label for="email"> Menu option 3</label>
+
+        </div>
+        <div class="form-floating mb-3">
+            <InputDate @bind-Value="foodMenu.TodayFood" id="email" class="form-control" placeholder="name@example.com" />
+            <label for="email"> Date</label>
+        </div>
+        <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-success">Set Today Menu</button>
+    </EditForm>
+
+</div>
+
+
+<hr>
+<div>
+    <button @onclick="ToggleFormVisibility" class="btn btn-primary">Send Message To Administration</button>
+    @if (showForm)
+    {
+        <div class="form-container">
+            <EditForm Model="@kitchen" OnValidSubmit="@HandleValidSubmit2">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-floating mb-3">
+                    <textarea @bind="kitchen.ProblemsInitchen" id="problemsInitchen" class="form-control" rows="4" style="height: 80px;"></textarea>
+                    <label for="email"> Reposrt Problem To Administration </label>
+                </div>
+                <div class="form-floating mb-3">
+                    <textarea @bind="kitchen.MissingIngredients" id="problemsInitchen" class="form-control" rows="4" style="height: 80px;"></textarea>
+                    <label for="email">Report Missing Ingeredients To Administration To Buy</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <textarea @bind="kitchen.ReportDate" id="problemsInitchen" class="form-control" rows="4" style="height: 80px;"></textarea>
+                    <label for="email"> Repordt Date</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="kitchen.Staff" id="email" class="form-control" placeholder="name@example.com" />
+                    <label for="email"> Staff</label>
+                </div>
+                <button id="login-submit" type="submit" class="w-25 btn btn-lg btn-danger">Repost Problem to Admin</button>
+            </EditForm>
+        </div>
+    }
+</div>
+
+
+
+
+
+@code {
+    public Kitchen kitchen = new Kitchen();
+    public FoodMenuDto foodMenu = new FoodMenuDto();
+    public string user2 { get; set; }
+    private bool showForm = false;
+    private string currentColor = "white";
+    public string MessageToUser { get; set; }
+
+    private void ChangeColor()
+    {
+        currentColor = "lightgreen";
+    }
+
+    private void ToggleFormVisibility()
+    {
+        showForm = !showForm;
+    }
+    public async Task HandleValidSubmit1()
+    {
+        var foodMenu2 = new FoodMenuDto
+            {
+                FoodMenuId = foodMenu.FoodMenuId,
+                Option1 = foodMenu.Option1,
+                Option2 = foodMenu.Option2,
+                Option3 = foodMenu.Option3,
+                TodayFood = foodMenu.TodayFood
+            };
+        await Http.PostAsJsonAsync<FoodMenuDto>("/Kitchen/TodayFoodMenu", foodMenu2);
+        ChangeColor();
+        MessageToUser = "Menu Added To Guest List";
+        foodMenu = new FoodMenuDto();
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is logged in and fetch their information
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            // User is authenticated, you can access user ID
+            user2 = user.FindFirst(c => c.Type == "sub")?.Value;
+            foodMenu.TodayFood = DateTime.Now;
+            kitchen.ReportDate = DateTime.Now;
+
+
+        }
+    }
+    public async Task HandleValidSubmit2()
+    {
+
+        await Http.PostAsJsonAsync<Kitchen>("/Kitchen/KitchenProblemToAdmin", kitchen);
+
+        ChangeColor();
+        MessageToUser = "Report has  been sent to Admin";
+        kitchen = new Kitchen();
+    }
+}

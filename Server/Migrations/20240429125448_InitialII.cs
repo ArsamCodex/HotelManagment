@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Post23 : Migration
+    public partial class InitialII : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,112 +14,116 @@ namespace HotelManagment.Server.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetUserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
-                keyValues: new object[] { "ccbe0b1a-5200-45bd-919d-48294b36ff75", "0633e466-21ba-4e0f-9a20-f1d096ff53e9" });
+                keyValues: new object[] { "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5", "b582358b-9cd0-486c-9cee-15f3ccdadb84" });
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "ccbe0b1a-5200-45bd-919d-48294b36ff75");
+                keyValue: "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5");
 
             migrationBuilder.DeleteData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
-                keyValue: "0633e466-21ba-4e0f-9a20-f1d096ff53e9");
+                keyValue: "b582358b-9cd0-486c-9cee-15f3ccdadb84");
 
             migrationBuilder.CreateTable(
-                name: "reception",
+                name: "fooMenu",
                 columns: table => new
                 {
-                    ReceptionId = table.Column<int>(type: "int", nullable: false)
+                    FoodMenuId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    staffId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Option1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Option3 = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_reception", x => x.ReceptionId);
+                    table.PrimaryKey("PK_fooMenu", x => x.FoodMenuId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "post",
+                name: "kitchen",
                 columns: table => new
                 {
-                    PostID = table.Column<int>(type: "int", nullable: false)
+                    KitchenId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Barcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReceivedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ForWhichRoom = table.Column<int>(type: "int", nullable: false),
-                    ReceptionId = table.Column<int>(type: "int", nullable: false)
+                    ProblemsInitchen = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MissingIngredients = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Staff = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FoodMenuId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_post", x => x.PostID);
+                    table.PrimaryKey("PK_kitchen", x => x.KitchenId);
                     table.ForeignKey(
-                        name: "FK_post_reception_ReceptionId",
-                        column: x => x.ReceptionId,
-                        principalTable: "reception",
-                        principalColumn: "ReceptionId",
+                        name: "FK_kitchen_fooMenu_FoodMenuId",
+                        column: x => x.FoodMenuId,
+                        principalTable: "fooMenu",
+                        principalColumn: "FoodMenuId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "badcd42b-2d07-4726-ad75-e0bcb96fb8e2", null, "admin", "ADMIN" });
+                values: new object[] { "04e6b683-860a-4c3d-9938-5bdf3d1c1a1d", null, "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "89b277dc-11db-46a3-ac35-1163d7b3fff8", 0, "9ce5daac-cba1-4a9a-917e-bac1910950c0", "newuser@example.com", true, false, null, "NEWUSER@EXAMPLE.COM", "NEWUSER@EXAMPLE.COM", "YourPasswordHashHere", null, false, "fd616b02-a6b9-43a0-82a4-9d1e0c2df4a6", false, "newuser@example.com" });
+                values: new object[] { "9f090c11-3376-435b-99f5-569c1f4e9894", 0, "cb6a5c84-3699-462e-abb2-444b07ebf42f", "newuser@example.com", true, false, null, "NEWUSER@EXAMPLE.COM", "NEWUSER@EXAMPLE.COM", "YourPasswordHashHere", null, false, "7a932966-4c31-422a-be36-7c9cc61a4660", false, "newuser@example.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "badcd42b-2d07-4726-ad75-e0bcb96fb8e2", "89b277dc-11db-46a3-ac35-1163d7b3fff8" });
+                values: new object[] { "04e6b683-860a-4c3d-9938-5bdf3d1c1a1d", "9f090c11-3376-435b-99f5-569c1f4e9894" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_post_ReceptionId",
-                table: "post",
-                column: "ReceptionId");
+                name: "IX_kitchen_FoodMenuId",
+                table: "kitchen",
+                column: "FoodMenuId",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "post");
+                name: "kitchen");
 
             migrationBuilder.DropTable(
-                name: "reception");
+                name: "fooMenu");
 
             migrationBuilder.DeleteData(
                 table: "AspNetUserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
-                keyValues: new object[] { "badcd42b-2d07-4726-ad75-e0bcb96fb8e2", "89b277dc-11db-46a3-ac35-1163d7b3fff8" });
+                keyValues: new object[] { "04e6b683-860a-4c3d-9938-5bdf3d1c1a1d", "9f090c11-3376-435b-99f5-569c1f4e9894" });
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "badcd42b-2d07-4726-ad75-e0bcb96fb8e2");
+                keyValue: "04e6b683-860a-4c3d-9938-5bdf3d1c1a1d");
 
             migrationBuilder.DeleteData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
-                keyValue: "89b277dc-11db-46a3-ac35-1163d7b3fff8");
+                keyValue: "9f090c11-3376-435b-99f5-569c1f4e9894");
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "ccbe0b1a-5200-45bd-919d-48294b36ff75", null, "admin", "ADMIN" });
+                values: new object[] { "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5", null, "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "0633e466-21ba-4e0f-9a20-f1d096ff53e9", 0, "f95f92c0-5795-43c3-a8e7-44079c5505c7", "newuser@example.com", true, false, null, "NEWUSER@EXAMPLE.COM", "NEWUSER@EXAMPLE.COM", "YourPasswordHashHere", null, false, "cd6cdf75-32b9-4ad4-a5bd-70f8a03560f3", false, "newuser@example.com" });
+                values: new object[] { "b582358b-9cd0-486c-9cee-15f3ccdadb84", 0, "c7689e36-a90b-4365-808b-249341e1c83f", "newuser@example.com", true, false, null, "NEWUSER@EXAMPLE.COM", "NEWUSER@EXAMPLE.COM", "YourPasswordHashHere", null, false, "f8531a77-7a7d-4ad5-b07f-33485fa68dea", false, "newuser@example.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "ccbe0b1a-5200-45bd-919d-48294b36ff75", "0633e466-21ba-4e0f-9a20-f1d096ff53e9" });
+                values: new object[] { "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5", "b582358b-9cd0-486c-9cee-15f3ccdadb84" });
         }
     }
 }

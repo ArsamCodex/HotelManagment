@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelManagment.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class firsts : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -108,6 +108,22 @@ namespace HotelManagment.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "post",
+                columns: table => new
+                {
+                    PostID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Barcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReceivedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ForWhichRoom = table.Column<int>(type: "int", nullable: false),
+                    StaffId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_post", x => x.PostID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "repair",
                 columns: table => new
                 {
@@ -180,11 +196,28 @@ namespace HotelManagment.Server.Migrations
                     COnditions = table.Column<int>(type: "int", nullable: false),
                     NeedRepair = table.Column<bool>(type: "bit", nullable: false),
                     StartReperation = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndReperation = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    EndReperation = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StaffStartedAction = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StaffEndedAction = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_roomsInspection", x => x.RoomInspectionID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "sendMessage",
+                columns: table => new
+                {
+                    SendMessageID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MessageTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    roomNumber = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_sendMessage", x => x.SendMessageID);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,6 +326,21 @@ namespace HotelManagment.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5", null, "admin", "ADMIN" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "b582358b-9cd0-486c-9cee-15f3ccdadb84", 0, "c7689e36-a90b-4365-808b-249341e1c83f", "newuser@example.com", true, false, null, "NEWUSER@EXAMPLE.COM", "NEWUSER@EXAMPLE.COM", "YourPasswordHashHere", null, false, "f8531a77-7a7d-4ad5-b07f-33485fa68dea", false, "newuser@example.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "b991502d-1f9f-4fc4-ac7c-26a2d79c97c5", "b582358b-9cd0-486c-9cee-15f3ccdadb84" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -397,6 +445,9 @@ namespace HotelManagment.Server.Migrations
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
+                name: "post");
+
+            migrationBuilder.DropTable(
                 name: "repair");
 
             migrationBuilder.DropTable(
@@ -407,6 +458,9 @@ namespace HotelManagment.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "roomsInspection");
+
+            migrationBuilder.DropTable(
+                name: "sendMessage");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

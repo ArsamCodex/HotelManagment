@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240426111529_postandreception")]
-    partial class postandreception
+    [Migration("20240429130716_InitialIII")]
+    partial class InitialIII
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0633e466-21ba-4e0f-9a20-f1d096ff53e9",
+                            Id = "59860352-770b-494a-9236-c215f9557f8b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f95f92c0-5795-43c3-a8e7-44079c5505c7",
+                            ConcurrencyStamp = "428d589d-1bdc-468f-99ff-49245c078305",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -243,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "cd6cdf75-32b9-4ad4-a5bd-70f8a03560f3",
+                            SecurityStamp = "71a313cd-a09c-4ba9-88ed-66845c5319ac",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -310,6 +310,95 @@ namespace HotelManagment.Server.Migrations
                     b.HasKey("ReservationID");
 
                     b.ToTable("reservation");
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.FoodMenu", b =>
+                {
+                    b.Property<int>("FoodMenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FoodMenuId"));
+
+                    b.Property<string>("Option1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TodayFood")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FoodMenuId");
+
+                    b.ToTable("fooMenu");
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Kitchen", b =>
+                {
+                    b.Property<int>("KitchenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KitchenId"));
+
+                    b.Property<int>("FoodMenuId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MissingIngredients")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProblemsInitchen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Staff")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("KitchenId");
+
+                    b.HasIndex("FoodMenuId")
+                        .IsUnique();
+
+                    b.ToTable("kitchen");
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Post", b =>
+                {
+                    b.Property<int>("PostID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostID"));
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ForWhichRoom")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReceivedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StaffId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PostID");
+
+                    b.ToTable("post");
                 });
 
             modelBuilder.Entity("HotelManagment.Shared.Repair", b =>
@@ -415,6 +504,30 @@ namespace HotelManagment.Server.Migrations
                     b.ToTable("roomsInspection");
                 });
 
+            modelBuilder.Entity("HotelManagment.Shared.SendMessage", b =>
+                {
+                    b.Property<int>("SendMessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SendMessageID"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("roomNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("SendMessageID");
+
+                    b.ToTable("sendMessage");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -444,7 +557,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ccbe0b1a-5200-45bd-919d-48294b36ff75",
+                            Id = "c92f9468-cc17-41bc-b77c-86852bc1dd17",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -541,8 +654,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "0633e466-21ba-4e0f-9a20-f1d096ff53e9",
-                            RoleId = "ccbe0b1a-5200-45bd-919d-48294b36ff75"
+                            UserId = "59860352-770b-494a-9236-c215f9557f8b",
+                            RoleId = "c92f9468-cc17-41bc-b77c-86852bc1dd17"
                         });
                 });
 
@@ -565,6 +678,17 @@ namespace HotelManagment.Server.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Kitchen", b =>
+                {
+                    b.HasOne("HotelManagment.Shared.FoodMenu", "FoodMenu")
+                        .WithOne("Kitchen")
+                        .HasForeignKey("HotelManagment.Shared.Kitchen", "FoodMenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FoodMenu");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -615,6 +739,12 @@ namespace HotelManagment.Server.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.FoodMenu", b =>
+                {
+                    b.Navigation("Kitchen")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

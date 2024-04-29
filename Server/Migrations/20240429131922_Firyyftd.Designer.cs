@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelManagment.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240426151824_ffhggd")]
-    partial class ffhggd
+    [Migration("20240429131922_Firyyftd")]
+    partial class Firyyftd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,9 +233,9 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d80d2bd4-6b34-44fc-b97d-adfe96741f18",
+                            Id = "89d4b23e-bace-4319-836b-981205c0ecde",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0f17a56e-bf28-4027-b15f-15a88c70b4c9",
+                            ConcurrencyStamp = "03d048b5-30b2-49e3-9b94-95727f00e3ea",
                             Email = "newuser@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -243,7 +243,7 @@ namespace HotelManagment.Server.Migrations
                             NormalizedUserName = "NEWUSER@EXAMPLE.COM",
                             PasswordHash = "YourPasswordHashHere",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c7d86519-0e98-4b32-b0c9-65fd24f5d3c7",
+                            SecurityStamp = "24e1dbbf-4195-4b60-93d4-298cbf547a0a",
                             TwoFactorEnabled = false,
                             UserName = "newuser@example.com"
                         });
@@ -310,6 +310,69 @@ namespace HotelManagment.Server.Migrations
                     b.HasKey("ReservationID");
 
                     b.ToTable("reservation");
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.FoodMenu", b =>
+                {
+                    b.Property<int>("FoodMenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FoodMenuId"));
+
+                    b.Property<string>("Option1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Option3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TodayFood")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FoodMenuId");
+
+                    b.ToTable("fooMenu");
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Kitchen", b =>
+                {
+                    b.Property<int>("KitchenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KitchenId"));
+
+                    b.Property<int?>("FoodMenuId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MissingIngredients")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProblemsInitchen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Staff")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("KitchenId");
+
+                    b.HasIndex("FoodMenuId")
+                        .IsUnique()
+                        .HasFilter("[FoodMenuId] IS NOT NULL");
+
+                    b.ToTable("kitchen");
                 });
 
             modelBuilder.Entity("HotelManagment.Shared.Post", b =>
@@ -442,6 +505,30 @@ namespace HotelManagment.Server.Migrations
                     b.ToTable("roomsInspection");
                 });
 
+            modelBuilder.Entity("HotelManagment.Shared.SendMessage", b =>
+                {
+                    b.Property<int>("SendMessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SendMessageID"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("roomNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("SendMessageID");
+
+                    b.ToTable("sendMessage");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -471,7 +558,7 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f484dbd2-62e1-4b6b-a2de-eb41c9b363ee",
+                            Id = "70760a50-3945-4d98-b195-457d0e746768",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -568,8 +655,8 @@ namespace HotelManagment.Server.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "d80d2bd4-6b34-44fc-b97d-adfe96741f18",
-                            RoleId = "f484dbd2-62e1-4b6b-a2de-eb41c9b363ee"
+                            UserId = "89d4b23e-bace-4319-836b-981205c0ecde",
+                            RoleId = "70760a50-3945-4d98-b195-457d0e746768"
                         });
                 });
 
@@ -592,6 +679,15 @@ namespace HotelManagment.Server.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.Kitchen", b =>
+                {
+                    b.HasOne("HotelManagment.Shared.FoodMenu", "FoodMenu")
+                        .WithOne("Kitchen")
+                        .HasForeignKey("HotelManagment.Shared.Kitchen", "FoodMenuId");
+
+                    b.Navigation("FoodMenu");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -643,6 +739,11 @@ namespace HotelManagment.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HotelManagment.Shared.FoodMenu", b =>
+                {
+                    b.Navigation("Kitchen");
                 });
 #pragma warning restore 612, 618
         }
