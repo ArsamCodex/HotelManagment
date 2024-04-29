@@ -42,6 +42,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,9 +62,6 @@ builder.Services.AddAuthentication(options =>
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSecurityKey"]))
             };
         });
-
-        // Other ConfigureServices code...
-    
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -85,7 +84,7 @@ builder.Services.AddSwaggerGen(option =>
                 {
                     Type=ReferenceType.SecurityScheme,
                     Id="Bearer",
- 
+
                 },
 
             },
@@ -93,6 +92,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
